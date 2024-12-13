@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм»
 
-* Студент: [David Matt](https://up.htmlacademy.ru/javascript-individual/2/user/2402257).
-* Наставник: `Неизвестно`.
+- Студент: [David Matt](https://up.htmlacademy.ru/javascript-individual/2/user/2402257).
+- Наставник: `Артём Картавый`.
 
 ---
 
