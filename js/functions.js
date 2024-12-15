@@ -12,7 +12,7 @@ checkPolindrome('Д овод');
 
 function checkIfNumber(string) {
   const array = string.split('');
-  let resultArray = [];
+  const resultArray = [];
   for (let i = 0; i < array.length; i++) {
     if (!isNaN(array[i]) && array[i] !== ' ') {
       resultArray.push(array[i]);
@@ -21,3 +21,4 @@ function checkIfNumber(string) {
 
   return resultArray.length === 0 ? NaN : resultArray.join('');
 }
+checkIfNumber('анапа 2007');
