@@ -1,36 +1,24 @@
 function checkMaxLengthOfString(string, maxLength) {
-  if (string.length <= maxLength) {
-    return true;
-  }
-  return false;
+  return string.length <= maxLength;
 }
+checkMaxLengthOfString('pe', 2);
 
-function checkPolindrom(string) {
-  const array = string.split("").filter((letter) => letter !== " ");
-  const arrayLength = Math.floor(array.length / 2);
-  const leftSide = array.slice(0, arrayLength);
-
-  const rightSide = array.reverse().slice(0, arrayLength);
-
-  if (leftSide.toString() === rightSide.toString()) {
-    return true;
-  } else {
-    return false;
-  }
+function checkPolindrome(string) {
+  const normalString = string.replaceAll(' ', '').toLowerCase();
+  const reversedString = normalString.split('').reverse().join('');
+  return normalString === reversedString;
 }
+checkPolindrome('Д овод');
 
-function checkIfNumuber(string) {
-  const array = string.split("");
-  let resultArray = [];
+function checkIfNumber(string) {
+  const array = string.split('');
+  const resultArray = [];
   for (let i = 0; i < array.length; i++) {
-    if (!isNaN(array[i]) && array[i] !== " ") {
+    if (!isNaN(array[i]) && array[i] !== ' ') {
       resultArray.push(array[i]);
     }
   }
 
-  if (resultArray.length === 0) {
-    return NaN;
-  } else {
-    return resultArray.filter((letter) => letter !== " ").join("");
-  }
+  return resultArray.length === 0 ? NaN : resultArray.join('');
 }
+checkIfNumber('анапа 2007');
