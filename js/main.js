@@ -1,3 +1,27 @@
+const MINNUMIDPHOTO = 1;
+const MAXNUMIDPHOTO = 25;
+const MINNUMIDCOMMENT = 1;
+const MAXNUMIDCOMMENT = 100;
+const MINNUMURL = 15;
+const MAXNUMURL = 200;
+const MINNUMLIKES = 15;
+const MAXNUMLIKES = 200;
+const MINNUMAVATAR = 1;
+const MAXNUMAVATAR = 6;
+const MINNUMOFCOMMENTS = 0;
+const MAXNUMOFCOMMENTS = 30;
+
+const createId = (min, max) => {
+  let currentValue = min - 1;
+
+  return function addPlus() {
+    if (currentValue <= max) {
+      currentValue++;
+    }
+    return currentValue;
+  };
+};
+
 const getRandomIntInclusive = (min, max) => {
   const lower = Math.ceil(Math.min(Math.abs(min), Math.abs(max)));
   const upper = Math.floor(Math.max(Math.abs(min), Math.abs(max)));
@@ -6,7 +30,7 @@ const getRandomIntInclusive = (min, max) => {
   return Math.floor(result);
 };
 
-const arrayOfComments = [
+const COMMENTS = [
   'Всё отлично!',
   'Вцелом всё неплохо. Но не всё.',
   'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
@@ -15,7 +39,7 @@ const arrayOfComments = [
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!',
 ];
 
-const arrayOfNames = [
+const NAMES = [
   'Кирилл Темошка',
   'Сальвадор Беллучи',
   'Скуф Скуфович',
@@ -25,38 +49,41 @@ const arrayOfNames = [
   'Обыкновенный мох',
 ];
 
-const createId = (min, max) => {
-  const previousCreatedId = [];
+const createIdPhoto = createId(MINNUMIDPHOTO, MAXNUMIDPHOTO);
+const createIdComment = createId(MINNUMIDCOMMENT, MAXNUMIDCOMMENT);
 
-  return function () {
-    let currentValue = getRandomIntInclusive(min, max);
-
-    while (previousCreatedId.includes(currentValue)) {
-      currentValue = getRandomIntInclusive(min, max);
-    }
-    previousCreatedId.push(currentValue);
-
-    return currentValue;
-  };
+const createQuantityOfComments = (quantity) => {
+  const comments = [];
+  for (let i = 0; i < quantity; i++) {
+    comments.push({
+      id: createIdComment(),
+      avatar: `img/avatar-${getRandomIntInclusive(
+        MINNUMAVATAR,
+        MAXNUMAVATAR
+      )}.svg`,
+      message: COMMENTS[getRandomIntInclusive(0, COMMENTS.length - 1)],
+      name: NAMES[getRandomIntInclusive(0, NAMES.length - 1)],
+    });
+  }
+  return comments;
 };
 
-const getPhotoId = createId(1, 25);
-const getCommentId = createId(1, 100);
+const quantityOfPhotoPosts = 25;
 
-const createObject = () => {
-  const newObject = {
-    id: getPhotoId(),
-    url: `photos/${getRandomIntInclusive(15, 200)}.jpg`,
-    description: 'Просто невероятное фото!',
-    likes: getRandomIntInclusive(15, 200),
-    comments: {
-      id: getCommentId(),
-      avatar: `img/avatar-${getRandomIntInclusive(1, 6)}.svg`,
-      message:
-        arrayOfComments[getRandomIntInclusive(0, arrayOfComments.length - 1)],
-      name: arrayOfNames[getRandomIntInclusive(0, arrayOfNames.length - 1)],
-    },
-  };
-  return newObject;
+const createPhotoPost = (quantity) => {
+  const photoPosts = [];
+  for (let i = 0; i < quantity; i++) {
+    const photoPost = {
+      id: createIdPhoto(),
+      url: `photos/${getRandomIntInclusive(MINNUMURL, MAXNUMURL)}.jpg`,
+      description: 'Просто невероятное фото!',
+      likes: getRandomIntInclusive(MINNUMLIKES, MAXNUMLIKES),
+      comments: createQuantityOfComments(
+        getRandomIntInclusive(MINNUMOFCOMMENTS, MAXNUMOFCOMMENTS)
+      ),
+    };
+    photoPosts.push(photoPost);
+  }
+  return photoPosts;
 };
-createObject();
+createPhotoPost(quantityOfPhotoPosts);
