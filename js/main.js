@@ -86,4 +86,5 @@ const createPhotoPost = (quantity) => {
   }
   return photoPosts;
 };
+
 createPhotoPost(quantityOfPhotoPosts);
