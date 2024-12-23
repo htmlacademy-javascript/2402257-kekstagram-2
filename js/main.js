@@ -1,34 +1,17 @@
-const MINNUMIDPHOTO = 1;
-const MAXNUMIDPHOTO = 25;
-const MINNUMIDCOMMENT = 1;
-const MAXNUMIDCOMMENT = 100;
-const MINNUMURL = 15;
-const MAXNUMURL = 200;
-const MINNUMLIKES = 15;
-const MAXNUMLIKES = 200;
-const MINNUMAVATAR = 1;
-const MAXNUMAVATAR = 6;
-const MINNUMOFCOMMENTS = 0;
-const MAXNUMOFCOMMENTS = 30;
-
-const createId = (min, max) => {
-  let currentValue = min - 1;
-
-  return function addPlus() {
-    if (currentValue <= max) {
-      currentValue++;
-    }
-    return currentValue;
-  };
-};
-
-const getRandomIntInclusive = (min, max) => {
-  const lower = Math.ceil(Math.min(Math.abs(min), Math.abs(max)));
-  const upper = Math.floor(Math.max(Math.abs(min), Math.abs(max)));
-  const result = Math.random() * (upper - lower + 1) + lower;
-
-  return Math.floor(result);
-};
+const MIN_NUM_ID_PHOTO = 1;
+const MAX_NUM_ID_PHOTO = 25;
+const MIN_NUM_ID_COMMENT = 1;
+const MAX_NUM_ID_COMMENT = 100;
+const MIN_NUM_URL = 15;
+const MAX_NUM_URL = 200;
+const MIN_NUM_LIKES = 15;
+const MAX_NUM_LIKES = 200;
+const MIN_NUM_AVATAR = 1;
+const MAX_NUM_AVATAR = 6;
+const MIN_NUM_OF_COMMENTS = 0;
+const MAX_NUM_OF_COMMENTS = 30;
+const QUANTITY_OF_PHOTO_POSTS = 25;
+const DESCRIPTION_TEXT = 'Просто невероятное фото!';
 
 const COMMENTS = [
   'Всё отлично!',
@@ -49,17 +32,31 @@ const NAMES = [
   'Обыкновенный мох',
 ];
 
-const createIdPhoto = createId(MINNUMIDPHOTO, MAXNUMIDPHOTO);
-const createIdComment = createId(MINNUMIDCOMMENT, MAXNUMIDCOMMENT);
+const createId = (initialId = 0) => {
+  let currentId = initialId - 1;
 
-const createQuantityOfComments = (quantity) => {
+  return () => ++currentId;
+};
+
+const getRandomIntInclusive = (min, max) => {
+  const lower = Math.ceil(Math.min(Math.abs(min), Math.abs(max)));
+  const upper = Math.floor(Math.max(Math.abs(min), Math.abs(max)));
+  const result = Math.random() * (upper - lower + 1) + lower;
+
+  return Math.floor(result);
+};
+
+const createIdPhoto = createId(MIN_NUM_ID_PHOTO, MAX_NUM_ID_PHOTO);
+const createIdComment = createId(MIN_NUM_ID_COMMENT, MAX_NUM_ID_COMMENT);
+
+const createComments = (quantity) => {
   const comments = [];
   for (let i = 0; i < quantity; i++) {
     comments.push({
       id: createIdComment(),
       avatar: `img/avatar-${getRandomIntInclusive(
-        MINNUMAVATAR,
-        MAXNUMAVATAR
+        MIN_NUM_AVATAR,
+        MAX_NUM_AVATAR
       )}.svg`,
       message: COMMENTS[getRandomIntInclusive(0, COMMENTS.length - 1)],
       name: NAMES[getRandomIntInclusive(0, NAMES.length - 1)],
@@ -68,18 +65,16 @@ const createQuantityOfComments = (quantity) => {
   return comments;
 };
 
-const quantityOfPhotoPosts = 25;
-
 const createPhotoPost = (quantity) => {
   const photoPosts = [];
   for (let i = 0; i < quantity; i++) {
     const photoPost = {
       id: createIdPhoto(),
-      url: `photos/${getRandomIntInclusive(MINNUMURL, MAXNUMURL)}.jpg`,
-      description: 'Просто невероятное фото!',
-      likes: getRandomIntInclusive(MINNUMLIKES, MAXNUMLIKES),
-      comments: createQuantityOfComments(
-        getRandomIntInclusive(MINNUMOFCOMMENTS, MAXNUMOFCOMMENTS)
+      url: `photos/${getRandomIntInclusive(MIN_NUM_URL, MAX_NUM_URL)}.jpg`,
+      description: DESCRIPTION_TEXT,
+      likes: getRandomIntInclusive(MIN_NUM_LIKES, MAX_NUM_LIKES),
+      comments: createComments(
+        getRandomIntInclusive(MIN_NUM_OF_COMMENTS, MAX_NUM_OF_COMMENTS)
       ),
     };
     photoPosts.push(photoPost);
@@ -87,4 +82,4 @@ const createPhotoPost = (quantity) => {
   return photoPosts;
 };
 
-createPhotoPost(quantityOfPhotoPosts);
+createPhotoPost(QUANTITY_OF_PHOTO_POSTS);
