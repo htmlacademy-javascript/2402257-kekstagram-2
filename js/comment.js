@@ -1,10 +1,11 @@
 import { getRandomIntInclusive } from './util.js';
-import { createId } from './id-creator.js';
+import { createId } from './idcreator.js';
+
 const MIN_NUM_ID_COMMENT = 1;
 const MAX_NUM_ID_COMMENT = 100;
 const MIN_NUM_AVATAR = 1;
 const MAX_NUM_AVATAR = 6;
-const createIdComment = createId(MIN_NUM_ID_COMMENT, MAX_NUM_ID_COMMENT);
+
 const COMMENTS = [
   'Всё отлично!',
   'Вцелом всё неплохо. Но не всё.',
@@ -23,6 +24,8 @@ const NAMES = [
   'Большая Мама',
   'Обыкновенный мох',
 ];
+
+const createIdComment = createId(MIN_NUM_ID_COMMENT, MAX_NUM_ID_COMMENT);
 
 const createComments = (quantity) => {
   const comments = [];

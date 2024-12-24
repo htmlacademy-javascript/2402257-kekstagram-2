@@ -1,6 +1,6 @@
 import { getRandomIntInclusive } from './util.js';
 import { createComments } from './comment.js';
-import { createId } from './id-creator.js';
+import { createId } from './idcreator.js';
 const MIN_NUM_ID_PHOTO = 1;
 const MAX_NUM_ID_PHOTO = 25;
 
@@ -11,7 +11,7 @@ const MAX_NUM_LIKES = 200;
 
 const MIN_NUM_OF_COMMENTS = 0;
 const MAX_NUM_OF_COMMENTS = 30;
-const QUANTITY_OF_PHOTO_POSTS = 25;
+
 const DESCRIPTION_TEXT = 'Просто невероятное фото!';
 
 const createIdPhoto = createId(MIN_NUM_ID_PHOTO, MAX_NUM_ID_PHOTO);
@@ -33,4 +33,4 @@ const createPhotoPost = (quantity) => {
   return photoPosts;
 };
 
-export { createPhotoPost, QUANTITY_OF_PHOTO_POSTS };
+export { createPhotoPost };

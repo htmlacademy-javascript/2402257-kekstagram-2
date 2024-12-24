@@ -1,3 +1,5 @@
-import { createPhotoPost, QUANTITY_OF_PHOTO_POSTS } from './photopost.js';
+import { createPhotoPost } from './photopost.js';
 
-console.log(createPhotoPost(QUANTITY_OF_PHOTO_POSTS));
+const QUANTITY_OF_PHOTO_POSTS = 25;
+
+createPhotoPost(QUANTITY_OF_PHOTO_POSTS);
