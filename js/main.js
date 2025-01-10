@@ -5,4 +5,4 @@ const QUANTITY_OF_PHOTO_POSTS = 25;
 
 createPhotoPost(QUANTITY_OF_PHOTO_POSTS);
 createMiniature(photosData);
-// привет
+// привет как дела?
