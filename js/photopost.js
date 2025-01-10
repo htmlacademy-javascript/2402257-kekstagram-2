@@ -4,11 +4,10 @@ import { createComments } from './comment.js';
 const MIN_NUM_ID_PHOTO = 1;
 const MAX_NUM_ID_PHOTO = 25;
 
-const MIN_NUM_URL = 15;
-const MAX_NUM_URL = 200;
+const MIN_NUM_URL = 1;
+const MAX_NUM_URL = 25;
 const MIN_NUM_LIKES = 15;
 const MAX_NUM_LIKES = 200;
-
 const MIN_NUM_OF_COMMENTS = 0;
 const MAX_NUM_OF_COMMENTS = 30;
 
