@@ -6,4 +6,10 @@ const getRandomIntInclusive = (min, max) => {
   return Math.floor(result);
 };
 
-export { getRandomIntInclusive };
+const createId = (initialId = 0) => {
+  let currentId = initialId - 1;
+
+  return () => ++currentId;
+};
+
+export { getRandomIntInclusive, createId };

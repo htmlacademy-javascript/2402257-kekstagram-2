@@ -1,6 +1,6 @@
-import { getRandomIntInclusive } from './util.js';
+import { getRandomIntInclusive, createId } from './util.js';
 import { createComments } from './comment.js';
-import { createId } from './idcreator.js';
+
 const MIN_NUM_ID_PHOTO = 1;
 const MAX_NUM_ID_PHOTO = 25;
 

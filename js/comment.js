@@ -1,5 +1,4 @@
-import { getRandomIntInclusive } from './util.js';
-import { createId } from './idcreator.js';
+import { getRandomIntInclusive, createId } from './util.js';
 
 const MIN_NUM_ID_COMMENT = 1;
 const MAX_NUM_ID_COMMENT = 100;

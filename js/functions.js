@@ -23,6 +23,11 @@ function checkIfNumber(string) {
 }
 checkIfNumber('анапа 2007');
 
+const convertTimeStringInMinutes = (string) => {
+  const [hour, minute] = string.split(':').map(Number);
+  return hour * 60 + minute;
+};
+
 function checkMeeting(startTime, endTime, startTimeOfMeeting, meetingTime) {
   const meetingTimeString = meetingTime.toString();
   const timeBoard = [startTime, endTime, startTimeOfMeeting];
@@ -30,24 +35,20 @@ function checkMeeting(startTime, endTime, startTimeOfMeeting, meetingTime) {
 
   for (let i = 0; i <= timeBoard.length - 1; i++) {
     const time = timeBoard[i];
-    const timeSplited = time.split(':');
-    const hours = Number(timeSplited[0]);
-    const minutes = Number(timeSplited[1]);
-    const minutesTotal = hours * 60 + minutes;
+    const minutesTotal = convertTimeStringInMinutes(time);
     timeBoardInMinutes.push(minutesTotal);
   }
-  const [workDayStart, workDayEnd, meetingStartTime, durationOfMeeting] =
-    timeBoardInMinutes;
+  const [workDayStart, workDayEnd, meetingStartTime] = timeBoardInMinutes;
 
   timeBoardInMinutes.push(meetingTimeString);
 
-  if (meetingStartTime < workDayStart) {
-    return false;
-  }
-  if (workDayEnd - meetingStartTime - durationOfMeeting >= 0) {
+  if (
+    workDayEnd - meetingStartTime - meetingTime >= 0 &&
+    meetingStartTime >= workDayStart
+  ) {
     return true;
   }
   return false;
 }
 
-checkMeeting('8:0', '10:0', '8:0', 120);
+checkMeeting('14:00', '17:30', '08:0', 90);
