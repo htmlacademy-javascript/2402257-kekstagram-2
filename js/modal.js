@@ -1,4 +1,4 @@
-import { userPhotoInterface, photosData } from './miniature.js';
+import { photosData } from './miniature.js';
 
 const modal = document.querySelector('.big-picture');
 const bigPicture = modal.querySelector('.big-picture__img img');

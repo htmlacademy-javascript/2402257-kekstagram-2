@@ -7,7 +7,7 @@ const sample = document.querySelector('#picture').content;
 const photosData = createPhotoPost(QUANTITY_OF_PHOTOS);
 const generatedPictures = document.createDocumentFragment();
 
-const createCloneElement = ({ comments, likes, url, description }) => {
+const createMiniature = ({ comments, likes, url, description }) => {
   const clonedElement = sample.cloneNode(true);
   const clonedElementImg = clonedElement.querySelector('.picture__img');
   const clonedElementLikes = clonedElement.querySelector('.picture__likes');
@@ -21,14 +21,14 @@ const createCloneElement = ({ comments, likes, url, description }) => {
   generatedPictures.append(clonedElement);
 };
 
-const createMiniature = (photos) => {
+const createMiniatures = (photos) => {
   photos.forEach((photo) => {
-    createCloneElement(photo);
+    createMiniature(photo);
   });
   return generatedPictures;
 };
 
-const createdPhotosElements = createMiniature(photosData);
+const createdPhotosElements = createMiniatures(photosData);
 
 userPhotoInterface.append(createdPhotosElements);
-export { createMiniature, photosData, userPhotoInterface };
+export { createMiniatures, photosData, userPhotoInterface };
