@@ -11,5 +11,6 @@ const createId = (initialId = 0) => {
 
   return () => ++currentId;
 };
+const isEscapeKey = (evt) => evt.key === 'Escape';
 
-export { getRandomIntInclusive, createId };
+export { getRandomIntInclusive, createId, isEscapeKey };
