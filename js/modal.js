@@ -14,11 +14,11 @@ const comment = document.querySelector('.social__comment');
 const likes = modal.querySelector('.likes-count');
 const closeButton = modal.querySelector('.big-picture__cancel');
 
-const onEscButtonClick = (evt) => {
+const onDocumentKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     modal.classList.add('hidden');
     commentsBlock.innerHTML = '';
-    document.removeEventListener('keydown', onEscButtonClick);
+    document.removeEventListener('keydown', onDocumentKeydown);
   }
 };
 
@@ -57,13 +57,13 @@ const onPicturesContainerClick = (evt) => {
     addModalContent(miniatureData);
     addModalComment(miniatureData);
   }
-  document.addEventListener('keydown', onEscButtonClick);
+  document.addEventListener('keydown', onDocumentKeydown);
 };
 
 const onCloseButtonClick = () => {
   modal.classList.add('hidden');
   commentsBlock.innerHTML = '';
-  document.removeEventListener('keydown', onEscButtonClick);
+  document.removeEventListener('keydown', onDocumentKeydown);
 };
 
 picturesContainer.addEventListener('click', onPicturesContainerClick);
