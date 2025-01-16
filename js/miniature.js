@@ -1,14 +1,14 @@
 import { createPhotoPost } from './photopost.js';
 
-const QUANTITY_OF_PHOTOS = 25;
-
 const userPhotoInterface = document.querySelector('.pictures');
 const sample = document.querySelector('#picture').content;
-const photosData = createPhotoPost(QUANTITY_OF_PHOTOS);
+const photosData = createPhotoPost();
 const generatedPictures = document.createDocumentFragment();
+// const commentsBlock = document.querySelector('.social__comments');
 
 const createMiniature = ({ comments, likes, url, description, id }) => {
   const clonedElement = sample.cloneNode(true);
+  // может так очистить два ненужных комма – commentsBlock.innerHTML = '' ???;
   const clonedElementImg = clonedElement.querySelector('.picture__img');
   const clonedElementLikes = clonedElement.querySelector('.picture__likes');
   const clonedElementComments =
@@ -29,7 +29,4 @@ const createMiniatures = (photos) => {
   return generatedPictures;
 };
 
-const createdPhotosElements = createMiniatures(photosData);
-
-userPhotoInterface.append(createdPhotosElements);
 export { createMiniatures, photosData, userPhotoInterface };
