@@ -15,7 +15,7 @@ const DESCRIPTION_TEXT = 'Просто невероятное фото!';
 
 const createIdPhoto = createId(MIN_NUM_ID_PHOTO, MAX_NUM_ID_PHOTO);
 
-const createPhotoPost = (quantity) => {
+const createPhotoPost = (quantity = 25) => {
   const photoPosts = [];
   for (let i = 0; i < quantity; i++) {
     const photoPost = {
