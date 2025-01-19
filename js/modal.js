@@ -1,6 +1,9 @@
 import { photosData } from './miniature.js';
 import { isEscapeKey } from './util.js';
 
+const QUANTITY_OF_NEXT_FIVE_COMMENTS = 5;
+const QUANTITY_OF_FIRST_FIVE_COMMENTS = 5;
+
 const modal = document.querySelector('.big-picture');
 const body = document.body;
 const picturesContainer = document.querySelector('.pictures');
@@ -15,20 +18,24 @@ const closeButton = modal.querySelector('.big-picture__cancel');
 const loadMoreButton = modal.querySelector('.social__comments-loader');
 let unLoadedComments = [];
 
+const createComment = (currentCommentData) => {
+  const commentElement = comment.cloneNode(true);
+  const commentElementAvatar = commentElement.querySelector('img');
+  const commentElementMessage = commentElement.querySelector('p');
+
+  commentElementAvatar.src = currentCommentData.avatar;
+  commentElementAvatar.alt = currentCommentData.name;
+  commentElementMessage.textContent = currentCommentData.message;
+
+  commentsBlock.appendChild(commentElement);
+};
+
 const onLoaderButtonClick = () => {
   for (let i = unLoadedComments.length - 1; i >= 0; i--) {
-    if (i < 5) {
-      const commentElement = comment.cloneNode(true);
-      const commentElementAvatar = commentElement.querySelector('img');
-      const commentElementMessage = commentElement.querySelector('p');
+    if (i < QUANTITY_OF_NEXT_FIVE_COMMENTS) {
+      createComment(unLoadedComments[i]);
 
-      commentElementAvatar.src = unLoadedComments[i].avatar;
-      commentElementAvatar.alt = unLoadedComments[i].name;
-      commentElementMessage.textContent = unLoadedComments[i].message;
-
-      commentsBlock.appendChild(commentElement);
-
-      unLoadedComments.splice(i, 1);
+      unLoadedComments.splice(i, 1); //удаляет выведенный элемент из массива оставшихся коммов
     }
   }
   if (unLoadedComments.length === 0) {
@@ -38,20 +45,18 @@ const onLoaderButtonClick = () => {
 };
 
 const loadComments = (miniatureData, commentData) => {
-  if (miniatureData.comments.indexOf(commentData) < 5) {
-    const commentElement = comment.cloneNode(true);
-    const commentElementAvatar = commentElement.querySelector('img');
-    const commentElementMessage = commentElement.querySelector('p');
-
-    commentElementAvatar.src = commentData.avatar;
-    commentElementAvatar.alt = commentData.name;
-    commentElementMessage.textContent = commentData.message;
-    commentsBlock.appendChild(commentElement);
-
+  if (
+    miniatureData.comments.indexOf(commentData) <
+    QUANTITY_OF_FIRST_FIVE_COMMENTS
+  ) {
+    createComment(commentData);
     const quantityOfComments = commentsBlock.children.length;
     showedCommentsCount.textContent = quantityOfComments;
   }
-  if (miniatureData.comments.indexOf(commentData) >= 5) {
+  if (
+    miniatureData.comments.indexOf(commentData) >=
+    QUANTITY_OF_FIRST_FIVE_COMMENTS
+  ) {
     unLoadedComments.push(commentData);
   }
 };
@@ -63,6 +68,7 @@ const onDocumentKeydown = (evt) => {
     document.removeEventListener('keydown', onDocumentKeydown);
     loadMoreButton.removeEventListener('click', onLoaderButtonClick);
     unLoadedComments = [];
+    showedCommentsCount.textContent = 0;
   }
 };
 
@@ -95,6 +101,9 @@ const onPicturesContainerClick = (evt) => {
   document.addEventListener('keydown', onDocumentKeydown);
   loadMoreButton.addEventListener('click', onLoaderButtonClick);
   loadMoreButton.classList.remove('hidden');
+  if (unLoadedComments.length === 0) {
+    loadMoreButton.classList.add('hidden');
+  }
   allCommentsCount.textContent = miniatureData.comments.length;
 };
 
@@ -104,6 +113,7 @@ const onCloseButtonClick = () => {
   document.removeEventListener('keydown', onDocumentKeydown);
   loadMoreButton.removeEventListener('click', onLoaderButtonClick);
   unLoadedComments = [];
+  showedCommentsCount.textContent = 0;
 };
 
 picturesContainer.addEventListener('click', onPicturesContainerClick);
