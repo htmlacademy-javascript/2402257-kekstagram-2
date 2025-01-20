@@ -1,8 +1,8 @@
 import { photosData } from './miniature.js';
 import { isEscapeKey } from './util.js';
 
-const QUANTITY_OF_NEXT_FIVE_COMMENTS = 5;
-const QUANTITY_OF_FIRST_FIVE_COMMENTS = 5;
+const START_CHEKER = 0;
+const NEXT_FIVE_COMMENTS = 5;
 
 const modal = document.querySelector('.big-picture');
 const body = document.body;
@@ -15,50 +15,38 @@ const commentsBlock = modal.querySelector('.social__comments');
 const comment = document.querySelector('#picture_comment').content;
 const likes = modal.querySelector('.likes-count');
 const closeButton = modal.querySelector('.big-picture__cancel');
-const loadMoreButton = modal.querySelector('.social__comments-loader');
-let unLoadedComments = [];
+const loadButton = modal.querySelector('.social__comments-loader');
 
-const createComment = (currentCommentData) => {
-  const commentElement = comment.cloneNode(true);
-  const commentElementAvatar = commentElement.querySelector('img');
-  const commentElementMessage = commentElement.querySelector('p');
+let bigPhotoComments = [];
 
-  commentElementAvatar.src = currentCommentData.avatar;
-  commentElementAvatar.alt = currentCommentData.name;
-  commentElementMessage.textContent = currentCommentData.message;
+const hideLoadButton = (comments) => {
+  if (commentsBlock.children.length === comments.length) {
+    loadButton.classList.add('hidden');
+  }
+};
 
-  commentsBlock.appendChild(commentElement);
+const loadFiveComments = (photoComment) => {
+  if (photoComment.length < 5) {
+    loadButton.classList.add('hidden');
+  }
+  const fiveComments = photoComment.splice(START_CHEKER, NEXT_FIVE_COMMENTS);
+
+  fiveComments.forEach(({ avatar, message, name }) => {
+    const commentElement = comment.cloneNode(true);
+    const commentElementAvatar = commentElement.querySelector('img');
+    const commentElementMessage = commentElement.querySelector('p');
+
+    commentElementAvatar.src = avatar;
+    commentElementAvatar.alt = name;
+    commentElementMessage.textContent = message;
+    commentsBlock.appendChild(commentElement);
+  });
+  const quantityOfComments = commentsBlock.children.length;
+  showedCommentsCount.textContent = quantityOfComments;
 };
 
 const onLoaderButtonClick = () => {
-  for (let i = unLoadedComments.length - 1; i >= 0; i--) {
-    if (i < QUANTITY_OF_NEXT_FIVE_COMMENTS) {
-      createComment(unLoadedComments[i]);
-
-      unLoadedComments.splice(i, 1); //удаляет выведенный элемент из массива оставшихся коммов
-    }
-  }
-  if (unLoadedComments.length === 0) {
-    loadMoreButton.classList.add('hidden');
-  }
-  showedCommentsCount.textContent = commentsBlock.children.length;
-};
-
-const loadComments = (miniatureData, commentData) => {
-  if (
-    miniatureData.comments.indexOf(commentData) <
-    QUANTITY_OF_FIRST_FIVE_COMMENTS
-  ) {
-    createComment(commentData);
-    const quantityOfComments = commentsBlock.children.length;
-    showedCommentsCount.textContent = quantityOfComments;
-  }
-  if (
-    miniatureData.comments.indexOf(commentData) >=
-    QUANTITY_OF_FIRST_FIVE_COMMENTS
-  ) {
-    unLoadedComments.push(commentData);
-  }
+  loadFiveComments(bigPhotoComments);
 };
 
 const onDocumentKeydown = (evt) => {
@@ -66,9 +54,7 @@ const onDocumentKeydown = (evt) => {
     modal.classList.add('hidden');
     commentsBlock.innerHTML = '';
     document.removeEventListener('keydown', onDocumentKeydown);
-    loadMoreButton.removeEventListener('click', onLoaderButtonClick);
-    unLoadedComments = [];
-    showedCommentsCount.textContent = 0;
+    bigPhotoComments = [];
   }
 };
 
@@ -76,48 +62,37 @@ const addModalContent = (miniatureData) => {
   bigPicture.src = miniatureData.url;
   likes.textContent = miniatureData.likes;
   description.textContent = miniatureData.description;
-};
-
-const addModalComment = (miniatureData) => {
-  miniatureData.comments.forEach((commentData) => {
-    loadComments(miniatureData, commentData);
-  });
+  allCommentsCount.textContent = miniatureData.comments.length;
 };
 
 const onPicturesContainerClick = (evt) => {
-  const miniatureData = photosData.find(
-    (photoData) => photoData.id === +evt.target.dataset.id
-  );
-  const miniatureComments = photosData.find(
-    (commentData) => commentData.comments
-  );
-
   if (evt.target.nodeName === 'IMG') {
+    const miniatureData = photosData.find(
+      (photoData) => photoData.id === +evt.target.dataset.id
+    );
+    bigPhotoComments.push(...miniatureData.comments);
+    loadFiveComments(bigPhotoComments);
     modal.classList.remove('hidden');
     body.classList.add('.modal-open');
     addModalContent(miniatureData);
-    addModalComment(miniatureData, miniatureComments);
+    if (commentsBlock.children.length !== miniatureData.comments.length) {
+      loadButton.classList.remove('hidden');
+    }
+    hideLoadButton(miniatureData.comments);
   }
+
   document.addEventListener('keydown', onDocumentKeydown);
-  loadMoreButton.addEventListener('click', onLoaderButtonClick);
-  loadMoreButton.classList.remove('hidden');
-  if (unLoadedComments.length === 0) {
-    loadMoreButton.classList.add('hidden');
-  }
-  allCommentsCount.textContent = miniatureData.comments.length;
 };
 
 const onCloseButtonClick = () => {
   modal.classList.add('hidden');
   commentsBlock.innerHTML = '';
   document.removeEventListener('keydown', onDocumentKeydown);
-  loadMoreButton.removeEventListener('click', onLoaderButtonClick);
-  unLoadedComments = [];
-  showedCommentsCount.textContent = 0;
+  bigPhotoComments = [];
 };
 
+loadButton.addEventListener('click', onLoaderButtonClick);
 picturesContainer.addEventListener('click', onPicturesContainerClick);
 
 closeButton.addEventListener('click', onCloseButtonClick);
-
 export { onPicturesContainerClick };
