@@ -3,6 +3,7 @@ import { isEscapeKey } from './util.js';
 
 const START_CHEKER = 0;
 const NEXT_FIVE_COMMENTS = 5;
+const FIVE_COMMENTS = 5;
 
 const modal = document.querySelector('.big-picture');
 const body = document.body;
@@ -19,34 +20,39 @@ const loadButton = modal.querySelector('.social__comments-loader');
 
 let bigPhotoComments = [];
 
-const hideLoadButton = (comments) => {
+const createQuantityOfComments = (data) => {
+  data
+    .splice(START_CHEKER, NEXT_FIVE_COMMENTS)
+    .forEach(({ avatar, message, name }) => {
+      //точно ли он тут нужен?
+      const commentElement = comment.cloneNode(true);
+      const commentElementAvatar = commentElement.querySelector('img');
+      const commentElementMessage = commentElement.querySelector('p');
+
+      commentElementAvatar.src = avatar;
+      commentElementAvatar.alt = name;
+      commentElementMessage.textContent = message;
+      commentsBlock.appendChild(commentElement);
+    });
+  const quantityOfComments = commentsBlock.children.length;
+  showedCommentsCount.textContent = quantityOfComments;
+};
+
+const hideLoadButtonIfEquals = (comments) => {
   if (commentsBlock.children.length === comments.length) {
     loadButton.classList.add('hidden');
   }
 };
 
-const loadFiveComments = (photoComment) => {
-  if (photoComment.length < 5) {
+const loadComments = (photoComment) => {
+  if (photoComment.length < FIVE_COMMENTS) {
     loadButton.classList.add('hidden');
   }
-  const fiveComments = photoComment.splice(START_CHEKER, NEXT_FIVE_COMMENTS);
-
-  fiveComments.forEach(({ avatar, message, name }) => {
-    const commentElement = comment.cloneNode(true);
-    const commentElementAvatar = commentElement.querySelector('img');
-    const commentElementMessage = commentElement.querySelector('p');
-
-    commentElementAvatar.src = avatar;
-    commentElementAvatar.alt = name;
-    commentElementMessage.textContent = message;
-    commentsBlock.appendChild(commentElement);
-  });
-  const quantityOfComments = commentsBlock.children.length;
-  showedCommentsCount.textContent = quantityOfComments;
+  createQuantityOfComments(photoComment);
 };
 
 const onLoaderButtonClick = () => {
-  loadFiveComments(bigPhotoComments);
+  loadComments(bigPhotoComments);
 };
 
 const onDocumentKeydown = (evt) => {
@@ -55,6 +61,7 @@ const onDocumentKeydown = (evt) => {
     commentsBlock.innerHTML = '';
     document.removeEventListener('keydown', onDocumentKeydown);
     bigPhotoComments = [];
+    loadButton.removeEventListener('click', onLoaderButtonClick);
   }
 };
 
@@ -71,17 +78,18 @@ const onPicturesContainerClick = (evt) => {
       (photoData) => photoData.id === +evt.target.dataset.id
     );
     bigPhotoComments.push(...miniatureData.comments);
-    loadFiveComments(bigPhotoComments);
+    loadComments(bigPhotoComments);
     modal.classList.remove('hidden');
     body.classList.add('.modal-open');
     addModalContent(miniatureData);
     if (commentsBlock.children.length !== miniatureData.comments.length) {
       loadButton.classList.remove('hidden');
     }
-    hideLoadButton(miniatureData.comments);
+    hideLoadButtonIfEquals(miniatureData.comments);
   }
 
   document.addEventListener('keydown', onDocumentKeydown);
+  loadButton.addEventListener('click', onLoaderButtonClick);
 };
 
 const onCloseButtonClick = () => {
@@ -89,9 +97,9 @@ const onCloseButtonClick = () => {
   commentsBlock.innerHTML = '';
   document.removeEventListener('keydown', onDocumentKeydown);
   bigPhotoComments = [];
+  loadButton.removeEventListener('click', onLoaderButtonClick);
 };
 
-loadButton.addEventListener('click', onLoaderButtonClick);
 picturesContainer.addEventListener('click', onPicturesContainerClick);
 
 closeButton.addEventListener('click', onCloseButtonClick);
