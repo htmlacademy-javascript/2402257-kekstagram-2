@@ -1,9 +1,7 @@
 import { photosData } from './miniature.js';
 import { isEscapeKey } from './util.js';
 
-const START_CHEKER = 0;
-const NEXT_FIVE_COMMENTS = 5;
-const FIVE_COMMENTS = 5;
+const QUANTITY_OF_COMMENTS = 5;
 
 const modal = document.querySelector('.big-picture');
 const body = document.body;
@@ -18,41 +16,31 @@ const likes = modal.querySelector('.likes-count');
 const closeButton = modal.querySelector('.big-picture__cancel');
 const loadButton = modal.querySelector('.social__comments-loader');
 
-let bigPhotoComments = [];
+let renderedCommentsCount = 0;
 
-const createQuantityOfComments = (data) => {
-  data
-    .splice(START_CHEKER, NEXT_FIVE_COMMENTS)
-    .forEach(({ avatar, message, name }) => {
-      //точно ли он тут нужен?
-      const commentElement = comment.cloneNode(true);
-      const commentElementAvatar = commentElement.querySelector('img');
-      const commentElementMessage = commentElement.querySelector('p');
+const renderComment = ({ avatar, message, name }) => {
+  const commentElement = comment.cloneNode(true);
+  const commentElementAvatar = commentElement.querySelector('img');
+  const commentElementMessage = commentElement.querySelector('p');
 
-      commentElementAvatar.src = avatar;
-      commentElementAvatar.alt = name;
-      commentElementMessage.textContent = message;
-      commentsBlock.appendChild(commentElement);
-    });
-  const quantityOfComments = commentsBlock.children.length;
-  showedCommentsCount.textContent = quantityOfComments;
+  commentElementAvatar.src = avatar;
+  commentElementAvatar.alt = name;
+  commentElementMessage.textContent = message;
+  commentsBlock.appendChild(commentElement);
 };
 
-const hideLoadButtonIfEquals = (comments) => {
-  if (commentsBlock.children.length === comments.length) {
-    loadButton.classList.add('hidden');
-  }
-};
+// const createQuantityOfComments = (data) => {
 
-const loadComments = (photoComment) => {
-  if (photoComment.length < FIVE_COMMENTS) {
-    loadButton.classList.add('hidden');
-  }
-  createQuantityOfComments(photoComment);
-};
+// };
 
-const onLoaderButtonClick = () => {
-  loadComments(bigPhotoComments);
+// const hideLoadButtonIfEquals = (comments) => {
+//   if (commentsBlock.children.length === comments.length) {
+//     loadButton.classList.add('hidden');
+//   }
+// };
+
+const loadComments = (comments) => {
+  comments.map(renderComment);
 };
 
 const onDocumentKeydown = (evt) => {
@@ -60,8 +48,8 @@ const onDocumentKeydown = (evt) => {
     modal.classList.add('hidden');
     commentsBlock.innerHTML = '';
     document.removeEventListener('keydown', onDocumentKeydown);
-    bigPhotoComments = [];
-    loadButton.removeEventListener('click', onLoaderButtonClick);
+    // bigPhotoComments = [];
+    // loadButton.removeEventListener('click', onLoadButtonClick);
   }
 };
 
@@ -72,32 +60,67 @@ const addModalContent = (miniatureData) => {
   allCommentsCount.textContent = miniatureData.comments.length;
 };
 
+const hideLoadMoreCommentsButton = () => loadButton.classList.remove('hidden');
+
+const openModal = () => {
+  modal.classList.remove('hidden');
+  body.classList.add('.modal-open');
+};
+
+const getCommentsToRender = (comments, index) =>
+  comments.slice(index, Math.min(QUANTITY_OF_COMMENTS, comments.length));
+
+const setRenderCommitsCounter = (value) => {
+  renderedCommentsCount = value;
+};
+
+const initModal = (miniatureData) => {
+  const commentToRender = getCommentsToRender(miniatureData.comments, 0);
+
+  setRenderCommitsCounter(renderedCommentsCount + commentToRender.length);
+  loadComments(commentToRender);
+
+  openModal();
+
+  addModalContent(miniatureData);
+
+  if (renderedCommentsCount >= miniatureData.comments.length) {
+    hideLoadMoreCommentsButton();
+  }
+
+  const onLoadButtonClick = () => {
+    const comments = getCommentsToRender(
+      miniatureData.comments,
+      renderedCommentsCount
+    );
+    loadComments(comments);
+
+    setRenderCommitsCounter(comments.length);
+  };
+
+  loadButton.addEventListener('click', onLoadButtonClick);
+  document.addEventListener('keydown', onDocumentKeydown);
+};
+
+const closeModal = () => {
+  modal.classList.add('hidden');
+  commentsBlock.innerHTML = '';
+};
+
+const onCloseButtonClick = () => {
+  closeModal();
+  document.removeEventListener('keydown', onDocumentKeydown);
+  setRenderCommitsCounter(0);
+  // loadButton.removeEventListener('click', onLoadButtonClick);
+};
+
 const onPicturesContainerClick = (evt) => {
   if (evt.target.nodeName === 'IMG') {
     const miniatureData = photosData.find(
       (photoData) => photoData.id === +evt.target.dataset.id
     );
-    bigPhotoComments.push(...miniatureData.comments);
-    loadComments(bigPhotoComments);
-    modal.classList.remove('hidden');
-    body.classList.add('.modal-open');
-    addModalContent(miniatureData);
-    if (commentsBlock.children.length !== miniatureData.comments.length) {
-      loadButton.classList.remove('hidden');
-    }
-    hideLoadButtonIfEquals(miniatureData.comments);
+    initModal(miniatureData);
   }
-
-  document.addEventListener('keydown', onDocumentKeydown);
-  loadButton.addEventListener('click', onLoaderButtonClick);
-};
-
-const onCloseButtonClick = () => {
-  modal.classList.add('hidden');
-  commentsBlock.innerHTML = '';
-  document.removeEventListener('keydown', onDocumentKeydown);
-  bigPhotoComments = [];
-  loadButton.removeEventListener('click', onLoaderButtonClick);
 };
 
 picturesContainer.addEventListener('click', onPicturesContainerClick);
