@@ -1,14 +1,12 @@
 import { createPhotoPost } from './photopost.js';
-
+import { initModal } from './modal.js';
 const userPhotoInterface = document.querySelector('.pictures');
 const sample = document.querySelector('#picture').content;
 const photosData = createPhotoPost();
 const generatedPictures = document.createDocumentFragment();
-// const commentsBlock = document.querySelector('.social__comments');
 
 const createMiniature = ({ comments, likes, url, description, id }) => {
   const clonedElement = sample.cloneNode(true);
-  // может так очистить два ненужных комма – commentsBlock.innerHTML = '' ???;
   const clonedElementImg = clonedElement.querySelector('.picture__img');
   const clonedElementLikes = clonedElement.querySelector('.picture__likes');
   const clonedElementComments =
@@ -28,5 +26,16 @@ const createMiniatures = (photos) => {
   });
   return generatedPictures;
 };
+
+const onUserPhotoInterfaceClick = (evt) => {
+  if (evt.target.nodeName === 'IMG') {
+    const miniatureData = photosData.find(
+      (photoData) => photoData.id === +evt.target.dataset.id
+    );
+    initModal(miniatureData);
+  }
+};
+
+userPhotoInterface.addEventListener('click', onUserPhotoInterfaceClick);
 
 export { createMiniatures, photosData, userPhotoInterface };

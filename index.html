@@ -56,6 +56,9 @@
               class="img-upload__form"
               id="upload-select-image"
               autocomplete="off"
+              method="post"
+              action="https://31.javascript.htmlacademy.pro/kekstagram"
+              enctype="multipart/form-data"
             >
               <!-- Изначальное состояние поля для загрузки изображения -->
               <fieldset class="img-upload__start">
@@ -245,6 +248,7 @@
                         class="text__description"
                         name="description"
                         placeholder="Ваш комментарий..."
+                        maxlength="140"
                       ></textarea>
                     </div>
                   </fieldset>
@@ -443,6 +447,7 @@
         <h2 class="data-error__title">Не удалось загрузить данные</h2>
       </section>
     </template>
+    <script src="/vendor/pristine/pristine.min.js"></script>
     <script src="js/main.js" type="module"></script>
   </body>
 </html>
