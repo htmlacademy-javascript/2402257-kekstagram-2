@@ -8,6 +8,7 @@ const generatedPictures = document.createDocumentFragment();
 const createMiniature = ({ comments, likes, url, description, id }) => {
   const clonedElement = sample.cloneNode(true);
   const clonedElementImg = clonedElement.querySelector('.picture__img');
+  const clonedElementLink = clonedElement.querySelector('.picture');
   const clonedElementLikes = clonedElement.querySelector('.picture__likes');
   const clonedElementComments =
     clonedElement.querySelector('.picture__comments');
@@ -16,7 +17,7 @@ const createMiniature = ({ comments, likes, url, description, id }) => {
   clonedElementLikes.textContent = likes;
   clonedElementImg.src = url;
   clonedElementImg.alt = description;
-  clonedElementImg.dataset.id = id;
+  clonedElementLink.dataset.id = id;
   generatedPictures.append(clonedElement);
 };
 
@@ -28,9 +29,14 @@ const createMiniatures = (photos) => {
 };
 
 const onUserPhotoInterfaceClick = (evt) => {
-  if (evt.target.nodeName === 'IMG') {
+  if (
+    evt.target.classList.contains('picture') ||
+    evt.target.closest('.picture')
+  ) {
+    evt.preventDefault();
+
     const miniatureData = photosData.find(
-      (photoData) => photoData.id === +evt.target.dataset.id
+      (photoData) => photoData.id === +evt.target.closest('.picture').dataset.id
     );
     initModal(miniatureData);
   }

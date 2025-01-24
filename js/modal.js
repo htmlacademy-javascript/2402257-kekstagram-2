@@ -65,6 +65,7 @@ const updateComments = () => {
 
 const closeModal = () => {
   modal.classList.add('hidden');
+  body.classList.remove('modal-open');
 };
 
 const resetModalContent = () => {
