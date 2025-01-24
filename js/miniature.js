@@ -44,4 +44,8 @@ const onUserPhotoInterfaceClick = (evt) => {
 
 userPhotoInterface.addEventListener('click', onUserPhotoInterfaceClick);
 
-export { createMiniatures, photosData, userPhotoInterface };
+const generateUserInterface = () => {
+  const createdPhotosElements = createMiniatures(photosData);
+  userPhotoInterface.append(createdPhotosElements);
+};
+export { generateUserInterface };
