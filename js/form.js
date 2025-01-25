@@ -10,7 +10,7 @@ const closeButton = editForm.querySelector('.img-upload__cancel');
 const hashtagInput = editForm.querySelector('.text__hashtags');
 const commentInput = editForm.querySelector('.text__description');
 const body = document.body;
-let errorText = 'penis';
+let errorText = '';
 const regular = /^#[a-zа-яё0-9]{1,19}$/i;
 
 const separateHashtags = (input) =>
@@ -48,16 +48,19 @@ const validationsErrorText = [
   'Хэштеги невалидны! ',
   'Хэштеги повторяются!',
 ];
+
 const validateHashtags = () => {
   const hashtags = separateHashtags(hashtagInput);
   let currentValidation = '';
+  let status = true;
   for (let j = 0; j < validations.length; j++) {
     currentValidation = validations[j];
     if (currentValidation(hashtags) === false) {
-      errorText = 'ehf!';
-      return false;
+      status = false;
+      console.log(errorText);
     }
   }
+  return status;
 };
 const pristine = new Pristine(editForm, {
   classTo: 'img-upload__field-wrapper',
@@ -66,6 +69,7 @@ const pristine = new Pristine(editForm, {
 });
 
 pristine.addValidator(hashtagInput, validateHashtags, errorText);
+
 pristine.addValidator(
   commentInput,
   checkCommentLimit,
