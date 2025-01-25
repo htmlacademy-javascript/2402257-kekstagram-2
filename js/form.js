@@ -10,86 +10,66 @@ const closeButton = editForm.querySelector('.img-upload__cancel');
 const hashtagInput = editForm.querySelector('.text__hashtags');
 const commentInput = editForm.querySelector('.text__description');
 const body = document.body;
-
-const hashtag = /^#[a-zа-яё0-9]{1,19}$/i;
+let errorText = 'penis';
+const regular = /^#[a-zа-яё0-9]{1,19}$/i;
 
 const separateHashtags = (input) =>
-  input.value.split(' ').filter((hash) => hash !== '');
+  input.value.split(' ').filter((hash) => Boolean(hash));
 
-const checkCommentLimit = () => {
-  if (commentInput.value.length > COMMENT_LENGTH_LIMIT) {
-    return false;
-  } else {
-    return true;
-  }
-};
+const checkCommentLimit = () =>
+  !(commentInput.value.length > COMMENT_LENGTH_LIMIT);
 
-const checkHashtagRegular = () => {
-  const testedHastagValues = [];
-  const hashtagValues = separateHashtags(hashtagInput);
-
-  hashtagValues.forEach((element) =>
-    testedHastagValues.push(hashtag.test(element))
+const checkHashtagRegular = (hashtags) => {
+  const hashtagValues = hashtags.filter(
+    (value) => regular.test(value) === false
   );
-
-  if (testedHastagValues.every((value) => value === true)) {
-    return true;
-  } else {
-    return false;
-  }
+  return hashtagValues.length <= 0;
 };
 
-const checkHashtagLength = () => {
-  const hashtagLength = separateHashtags(hashtagInput).length;
+const checkHashtagLength = (hashtags) => {
+  const hashtagLength = hashtags.length;
 
-  if (hashtagLength > MAX_QUANTITY_OF_HASHTAGS) {
-    return false;
-  } else {
-    return true;
-  }
+  return hashtagLength <= MAX_QUANTITY_OF_HASHTAGS;
 };
 
-const checkDuplicatedHashtag = () => {
-  const hashtagsToCompare = separateHashtags(hashtagInput);
-  let status = true;
-  let index = 1;
-  let currentHashtag = hashtagsToCompare[0];
-  const checkAllHashtag = () => {
-    for (let i = index; i < hashtagsToCompare.length; i++) {
-      if (currentHashtag === hashtagsToCompare[i]) {
-        status = false;
-      }
+const checkDuplicatedHashtag = (hashtags) => {
+  const hashtagsToCompare = hashtags;
+  return hashtagsToCompare.length === new Set(hashtagsToCompare).size;
+};
+
+const validations = [
+  checkHashtagLength,
+  checkHashtagRegular,
+  checkDuplicatedHashtag,
+];
+
+const validationsErrorText = [
+  'Неверное кол-во Хэштегов! ',
+  'Хэштеги невалидны! ',
+  'Хэштеги повторяются!',
+];
+const validateHashtags = () => {
+  const hashtags = separateHashtags(hashtagInput);
+  let currentValidation = '';
+  for (let j = 0; j < validations.length; j++) {
+    currentValidation = validations[j];
+    if (currentValidation(hashtags) === false) {
+      errorText = 'ehf!';
+      return false;
     }
-    currentHashtag = hashtagsToCompare[index++];
-  };
-  checkAllHashtag();
-  return status;
+  }
 };
-
 const pristine = new Pristine(editForm, {
   classTo: 'img-upload__field-wrapper',
   errorTextParent: 'img-upload__field-wrapper',
   errorTextClass: 'img-upload__field-wrapper--error',
 });
 
-pristine.addValidator(hashtagInput, checkHashtagRegular, 'Хэштеги не валидны!');
-
-pristine.addValidator(
-  hashtagInput,
-  checkDuplicatedHashtag,
-  'Хэштеги не должны повторяться!'
-);
-
-pristine.addValidator(
-  hashtagInput,
-  checkHashtagLength,
-  'Невалидное количество хэштегов!'
-);
-
+pristine.addValidator(hashtagInput, validateHashtags, errorText);
 pristine.addValidator(
   commentInput,
   checkCommentLimit,
-  'Длинна комметария не должна превышать 140 символов!'
+  'Длина комментария привышает 140 символов!'
 );
 
 const onInputKeyDown = (evt) => {
