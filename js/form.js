@@ -10,8 +10,9 @@ const closeButton = editForm.querySelector('.img-upload__cancel');
 const hashtagInput = editForm.querySelector('.text__hashtags');
 const commentInput = editForm.querySelector('.text__description');
 const body = document.body;
-let errorText = '';
 const regular = /^#[a-zа-яё0-9]{1,19}$/i;
+
+let errorText = '';
 
 const separateHashtags = (input) =>
   input.value.split(' ').filter((hash) => Boolean(hash));
@@ -48,8 +49,12 @@ const validationsErrorText = [
   'Хэштеги невалидны! ',
   'Хэштеги повторяются!',
 ];
+const commentErrorText = 'Длина комментария привышает 140 символов!';
+
+const generateErrorText = () => errorText;
 
 const validateHashtags = () => {
+  errorText = '';
   const hashtags = separateHashtags(hashtagInput);
   let currentValidation = '';
   let status = true;
@@ -57,7 +62,7 @@ const validateHashtags = () => {
     currentValidation = validations[j];
     if (currentValidation(hashtags) === false) {
       status = false;
-      console.log(errorText);
+      errorText += validationsErrorText[j];
     }
   }
   return status;
@@ -68,29 +73,36 @@ const pristine = new Pristine(editForm, {
   errorTextClass: 'img-upload__field-wrapper--error',
 });
 
-pristine.addValidator(hashtagInput, validateHashtags, errorText);
+pristine.addValidator(hashtagInput, validateHashtags, generateErrorText);
 
-pristine.addValidator(
-  commentInput,
-  checkCommentLimit,
-  'Длина комментария привышает 140 символов!'
-);
+pristine.addValidator(commentInput, checkCommentLimit, commentErrorText);
 
 const onInputKeyDown = (evt) => {
   evt.stopPropagation();
 };
 
-const hideEditForm = () => {
-  editFormOverlay.classList.add('hidden');
-  body.classList.remove('modal-open');
-  closeButton.removeEventListener('click', hideEditForm);
+const removeEditFormListeners = () => {
   commentInput.removeEventListener('keydown', onInputKeyDown);
   hashtagInput.removeEventListener('keydown', onInputKeyDown);
   document.removeEventListener('keydown', onDocumentKeydown);
   editForm.removeEventListener('submit', onEditFormSubmit);
+};
+
+const hideEditForm = () => {
+  editFormOverlay.classList.add('hidden');
+  body.classList.remove('modal-open');
+};
+
+const clearEditFormInputs = () => {
   hashtagInput.value = '';
   commentInput.value = '';
+};
+const destroyEditForm = () => {
+  hideEditForm();
+  removeEditFormListeners();
+  clearEditFormInputs();
   pristine.reset();
+  closeButton.removeEventListener('click', destroyEditForm);
 };
 
 function onEditFormSubmit(evt) {
@@ -101,7 +113,7 @@ function onEditFormSubmit(evt) {
   if (isValid) {
     console.log('Форма валидна! Отправляем данные на сервер...');
     editForm.removeEventListener('submit', onEditFormSubmit);
-    hideEditForm();
+    destroyEditForm();
   } else {
     console.log('Форма невалидна! Исправьте ошибки.');
   }
@@ -109,19 +121,27 @@ function onEditFormSubmit(evt) {
 
 function onDocumentKeydown(evt) {
   if (isEscapeKey(evt)) {
-    hideEditForm();
+    destroyEditForm();
   }
   document.removeEventListener('keydown', onDocumentKeydown);
 }
 
-const onImgInputClick = () => {
-  editFormOverlay.classList.remove('hidden');
-  body.classList.add('modal-open');
-  closeButton.addEventListener('click', hideEditForm);
+const addEditFormListeners = () => {
+  closeButton.addEventListener('click', destroyEditForm);
   editForm.addEventListener('submit', onEditFormSubmit);
   document.addEventListener('keydown', onDocumentKeydown);
   commentInput.addEventListener('keydown', onInputKeyDown);
   hashtagInput.addEventListener('keydown', onInputKeyDown);
+};
+
+const showEditForm = () => {
+  editFormOverlay.classList.remove('hidden');
+  body.classList.add('modal-open');
+};
+
+const onImgInputClick = () => {
+  showEditForm();
+  addEditFormListeners();
 };
 
 imgInput.addEventListener('change', onImgInputClick);
