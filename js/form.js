@@ -1,7 +1,23 @@
 import { isEscapeKey } from './util.js';
-
+import {
+  addButtonScaleListeners,
+  removeButtonScaleListeners,
+  resetUploadedImgScale,
+} from './scalebuttons.js';
+import {
+  addFiltersContainerListener,
+  removeFiltersContainerListener,
+  resetFilter,
+} from './filter.js';
 const COMMENT_LENGTH_LIMIT = 140;
 const MAX_QUANTITY_OF_HASHTAGS = 5;
+
+const validationsErrorText = {
+  INVALID_QUANTITY_OF_HASHTAGS: 'Неверное кол-во Хэштегов! ',
+  INVALID_REGULAR_HASHTAGS: 'Хэштеги невалидны! ',
+  INVALID_DUPLICATED_HASHTAGS: 'Хэштеги повторяются!',
+  INVALID_LENGTH_OF_COMMENTS: 'Длина комментария привышает 140 символов!',
+};
 
 const imgInput = document.querySelector('.img-upload__input');
 const editFormOverlay = document.querySelector('.img-upload__overlay');
@@ -12,70 +28,65 @@ const commentInput = editForm.querySelector('.text__description');
 const body = document.body;
 const regular = /^#[a-zа-яё0-9]{1,19}$/i;
 
-let errorText = '';
-
 const separateHashtags = (input) =>
   input.value.split(' ').filter((hash) => Boolean(hash));
 
 const checkCommentLimit = () =>
   !(commentInput.value.length > COMMENT_LENGTH_LIMIT);
 
-const checkHashtagRegular = (hashtags) => {
-  const hashtagValues = hashtags.filter(
-    (value) => regular.test(value) === false
-  );
-  return hashtagValues.length <= 0;
-};
+const checkHashtagRegular = (hashtag) => regular.test(hashtag);
 
-const checkHashtagLength = (hashtags) => {
-  const hashtagLength = hashtags.length;
-
-  return hashtagLength <= MAX_QUANTITY_OF_HASHTAGS;
-};
-
-const checkDuplicatedHashtag = (hashtags) => {
-  const hashtagsToCompare = hashtags;
-  return hashtagsToCompare.length === new Set(hashtagsToCompare).size;
-};
-
-const validations = [
-  checkHashtagLength,
-  checkHashtagRegular,
-  checkDuplicatedHashtag,
-];
-
-const validationsErrorText = [
-  'Неверное кол-во Хэштегов! ',
-  'Хэштеги невалидны! ',
-  'Хэштеги повторяются!',
-];
-const commentErrorText = 'Длина комментария привышает 140 символов!';
-
-const generateErrorText = () => errorText;
-
-const validateHashtags = () => {
-  errorText = '';
-  const hashtags = separateHashtags(hashtagInput);
-  let currentValidation = '';
-  let status = true;
-  for (let j = 0; j < validations.length; j++) {
-    currentValidation = validations[j];
-    if (currentValidation(hashtags) === false) {
-      status = false;
-      errorText += validationsErrorText[j];
+const checkHashtagsRegularValidation = (hashtags) => {
+  for (let i = 0; i < hashtags.length; i++) {
+    if (checkHashtagRegular(hashtags[i]) === false) {
+      return validationsErrorText.INVALID_REGULAR_HASHTAGS;
     }
   }
-  return status;
 };
+
+const checkHashtagsLengthValidation = (hashtags) => {
+  if (hashtags.length <= MAX_QUANTITY_OF_HASHTAGS === false) {
+    return validationsErrorText.INVALID_QUANTITY_OF_HASHTAGS;
+  }
+};
+const checkDuplicatedHashtagsValidation = (hashtags) => {
+  if (!(hashtags.length === new Set(hashtags).size)) {
+    return validationsErrorText.INVALID_DUPLICATED_HASHTAGS;
+  }
+};
+const validations = [
+  checkHashtagsLengthValidation,
+  checkHashtagsRegularValidation,
+  checkDuplicatedHashtagsValidation,
+];
+
+const getErrorMessage = () => {
+  const hashtags = separateHashtags(hashtagInput);
+
+  const result = validations.reduce((acc, validator) => {
+    const message = validator(hashtags);
+    return message ? [...acc, message].join('') : acc;
+  }, []);
+  return result;
+};
+const validateHashtags = () => {
+  const errorMessage = getErrorMessage();
+  return errorMessage.length === 0;
+};
+
 const pristine = new Pristine(editForm, {
   classTo: 'img-upload__field-wrapper',
   errorTextParent: 'img-upload__field-wrapper',
   errorTextClass: 'img-upload__field-wrapper--error',
 });
 
-pristine.addValidator(hashtagInput, validateHashtags, generateErrorText);
+pristine.addValidator(hashtagInput, validateHashtags, getErrorMessage);
 
-pristine.addValidator(commentInput, checkCommentLimit, commentErrorText);
+pristine.addValidator(
+  commentInput,
+  checkCommentLimit,
+  validationsErrorText.INVALID_LENGTH_OF_COMMENTS
+);
 
 const onInputKeyDown = (evt) => {
   evt.stopPropagation();
@@ -97,10 +108,15 @@ const clearEditFormInputs = () => {
   hashtagInput.value = '';
   commentInput.value = '';
 };
+
 const destroyEditForm = () => {
+  resetFilter();
+  removeFiltersContainerListener();
   hideEditForm();
   removeEditFormListeners();
+  removeButtonScaleListeners();
   clearEditFormInputs();
+  resetUploadedImgScale();
   pristine.reset();
   closeButton.removeEventListener('click', destroyEditForm);
 };
@@ -111,11 +127,8 @@ function onEditFormSubmit(evt) {
   const isValid = pristine.validate();
 
   if (isValid) {
-    console.log('Форма валидна! Отправляем данные на сервер...');
     editForm.removeEventListener('submit', onEditFormSubmit);
     destroyEditForm();
-  } else {
-    console.log('Форма невалидна! Исправьте ошибки.');
   }
 }
 
@@ -140,6 +153,8 @@ const showEditForm = () => {
 };
 
 const onImgInputClick = () => {
+  addFiltersContainerListener();
+  addButtonScaleListeners();
   showEditForm();
   addEditFormListeners();
 };
