@@ -43,20 +43,16 @@ const onButtonSmallerClick = () => {
 const resetUploadedImgScale = () => {
   uploadedImg.style.transform = 'scale(1)';
 };
-const addButtonScaleListeners = () => {
+const initScaleButtons = () => {
   buttonBigger.addEventListener('click', onButttonBiggerClick);
 
   buttonSmaller.addEventListener('click', onButtonSmallerClick);
 };
 
-const removeButtonScaleListeners = () => {
+const destroyScaleButtons = () => {
   buttonBigger.removeEventListener('click', onButttonBiggerClick);
 
   buttonSmaller.removeEventListener('click', onButtonSmallerClick);
 };
 
-export {
-  addButtonScaleListeners,
-  removeButtonScaleListeners,
-  resetUploadedImgScale,
-};
+export { initScaleButtons, destroyScaleButtons, resetUploadedImgScale };

@@ -1,14 +1,10 @@
 import { isEscapeKey } from './util.js';
 import {
-  addButtonScaleListeners,
-  removeButtonScaleListeners,
+  initScaleButtons,
+  destroyScaleButtons,
   resetUploadedImgScale,
 } from './scale-buttons-form.js';
-import {
-  addFiltersContainerListener,
-  removeFiltersContainerListener,
-  resetFilter,
-} from './filter-form.js';
+import { initFilter, destroyFilter, resetFilter } from './filter-form.js';
 import { addValidators, resetValidators, pristine } from './validation-form.js';
 
 const imgInput = document.querySelector('.img-upload__input');
@@ -45,10 +41,10 @@ const clearEditFormInputs = () => {
 
 const destroyEditForm = () => {
   resetFilter();
-  removeFiltersContainerListener();
+  destroyFilter();
   hideEditForm();
   removeEditFormListeners();
-  removeButtonScaleListeners();
+  destroyScaleButtons();
   clearEditFormInputs();
   resetUploadedImgScale();
   resetValidators();
@@ -88,8 +84,8 @@ const showEditForm = () => {
 
 const onImgInputChange = () => {
   addValidators();
-  addFiltersContainerListener();
-  addButtonScaleListeners();
+  initFilter();
+  initScaleButtons();
   showEditForm();
   addEditFormListeners();
 };

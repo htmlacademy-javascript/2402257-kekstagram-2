@@ -1,9 +1,78 @@
+const FILTER_CONFIGS = {
+  'effect-chrome': [
+    {
+      range: {
+        min: 0,
+        max: 1,
+      },
+      start: 1,
+      step: 0.1,
+    },
+    'grayscale',
+  ],
+  'effect-sepia': [
+    {
+      range: {
+        min: 0,
+        max: 1,
+      },
+      start: 1,
+      step: 0.1,
+    },
+    'sepia',
+  ],
+  'effect-marvin': [
+    {
+      range: {
+        min: 0,
+        max: 100,
+      },
+      start: 100,
+      step: 1,
+    },
+    'invert',
+  ],
+  'effect-phobos': [
+    {
+      range: {
+        min: 0,
+        max: 3,
+      },
+      start: 3,
+      step: 0.1,
+    },
+    'blur',
+  ],
+  'effect-heat': [
+    {
+      range: {
+        min: 1,
+        max: 3,
+      },
+      start: 3,
+      step: 0.1,
+    },
+    'brightness',
+  ],
+  'effect-none': [
+    {
+      range: {
+        min: 0,
+        max: 1,
+      },
+      start: 1,
+      step: 0.1,
+    },
+    '',
+  ],
+};
+
 const slider = document.querySelector('.effect-level__slider');
 const sliderContainer = document.querySelector('.img-upload__effect-level');
 const effectValueOutput = document.querySelector('.effect-level__value');
 const filtersContainer = document.querySelector('.effects__list');
 const uploadedImg = document.querySelector('.img-upload__preview img');
-//эффект левел неправильно отправляется
+
 noUiSlider.create(slider, {
   range: {
     min: 0,
@@ -28,79 +97,23 @@ const updateSlider = (filter) => {
     }
   });
 };
-const onFilterContainerClick = (evt) => {
-  if (evt.target.id === 'effect-chrome') {
-    slider.noUiSlider.updateOptions({
-      range: {
-        min: 0,
-        max: 1,
-      },
-      start: 1,
-      step: 0.1,
-    });
-    updateSlider('grayscale');
-    sliderContainer.classList.remove('hidden');
-  }
-  if (evt.target.id === 'effect-sepia') {
-    slider.noUiSlider.updateOptions({
-      range: {
-        min: 0,
-        max: 1,
-      },
-      start: 1,
-      step: 0.1,
-    });
-    updateSlider('sepia');
-    sliderContainer.classList.remove('hidden');
-  }
-  if (evt.target.id === 'effect-marvin') {
-    slider.noUiSlider.updateOptions({
-      range: {
-        min: 0,
-        max: 100,
-      },
-      start: 100,
-      step: 1,
-    });
-    updateSlider('invert');
-    sliderContainer.classList.remove('hidden');
-  }
-  if (evt.target.id === 'effect-phobos') {
-    slider.noUiSlider.updateOptions({
-      range: {
-        min: 0,
-        max: 3,
-      },
-      start: 3,
-      step: 0.1,
-    });
-    updateSlider('blur');
-    sliderContainer.classList.remove('hidden');
-  }
-  if (evt.target.id === 'effect-heat') {
-    slider.noUiSlider.updateOptions({
-      range: {
-        min: 1,
-        max: 3,
-      },
-      start: 3,
-      step: 0.1,
-    });
-    updateSlider('brightness');
-    sliderContainer.classList.remove('hidden');
-  }
-  if (evt.target.id === 'effect-none') {
-    slider.noUiSlider.updateOptions({
-      range: {
-        min: 0,
-        max: 100,
-      },
-      start: 100,
-      connect: 'lower',
-    });
+
+const updateFilterSettings = (filtername) => {
+  if (filtername === 'effect-none') {
+    slider.noUiSlider.updateOptions('effect-none');
     uploadedImg.style.filter = '';
 
     sliderContainer.classList.add('hidden');
+  } else {
+    slider.noUiSlider.updateOptions(FILTER_CONFIGS[filtername][0]);
+    updateSlider(FILTER_CONFIGS[filtername][1]);
+    sliderContainer.classList.remove('hidden');
+  }
+};
+
+const onFilterContainerClick = (evt) => {
+  if (evt.target.id) {
+    updateFilterSettings(evt.target.id);
   }
 };
 
@@ -116,15 +129,11 @@ const resetFilter = () => {
   });
 };
 
-const addFiltersContainerListener = () => {
+const initFilter = () => {
   filtersContainer.addEventListener('click', onFilterContainerClick);
 };
-const removeFiltersContainerListener = () => {
+const destroyFilter = () => {
   filtersContainer.removeEventListener('click', onFilterContainerClick);
 };
 
-export {
-  addFiltersContainerListener,
-  removeFiltersContainerListener,
-  resetFilter,
-};
+export { initFilter, destroyFilter, resetFilter };
