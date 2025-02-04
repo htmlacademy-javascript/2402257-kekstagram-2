@@ -5,7 +5,11 @@ import {
   resetUploadedImgScale,
 } from './scale-buttons-form.js';
 import { initFilter, destroyFilter, resetFilter } from './filter-form.js';
-import { addValidators, resetValidators, pristine } from './validation-form.js';
+import {
+  addValidators,
+  resetValidators,
+  setValidator,
+} from './validation-form.js';
 
 const imgInput = document.querySelector('.img-upload__input');
 const editFormOverlay = document.querySelector('.img-upload__overlay');
@@ -54,9 +58,7 @@ const destroyEditForm = () => {
 function onEditFormSubmit(evt) {
   evt.preventDefault();
 
-  const isValid = pristine.validate();
-
-  if (isValid) {
+  if (setValidator()) {
     editForm.removeEventListener('submit', onEditFormSubmit);
     destroyEditForm();
   }

@@ -75,9 +75,10 @@ const addValidators = () => {
     ValidationsErrorText.INVALID_LENGTH_OF_COMMENTS
   );
 };
+const setValidator = () => pristine.validate();
 
 const resetValidators = () => {
   pristine.reset();
 };
 
-export { addValidators, resetValidators, pristine };
+export { addValidators, resetValidators, setValidator };

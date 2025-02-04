@@ -1,4 +1,4 @@
-const SCALE_CONFIG = {
+const ScaleConfig = {
   MAX_SCALE: 100,
   SCALE_STEP: 25,
   BIGGER_BUTTON_LIMIT: 75,
@@ -13,16 +13,14 @@ const uploadedImg = document.querySelector('.img-upload__preview img');
 const changeScale = (action) => {
   let value = Number(scaleValueOutput.value.replace(/\D/g, ''));
 
-  if (action === 'increase' && value <= SCALE_CONFIG.BIGGER_BUTTON_LIMIT) {
-    value += SCALE_CONFIG.SCALE_STEP;
-  } else if (
-    action === 'decrease' &&
-    value >= SCALE_CONFIG.SMALLER_BUTTON_LIMIT
-  ) {
-    value -= SCALE_CONFIG.SCALE_STEP;
+  if (action === 'increase' && value <= ScaleConfig.BIGGER_BUTTON_LIMIT) {
+    value += ScaleConfig.SCALE_STEP;
+  }
+  if (action === 'decrease' && value >= ScaleConfig.SMALLER_BUTTON_LIMIT) {
+    value -= ScaleConfig.SCALE_STEP;
   }
 
-  if (value === SCALE_CONFIG.MAX_SCALE) {
+  if (value === ScaleConfig.MAX_SCALE) {
     uploadedImg.style.transform = 'scale(1)';
   } else {
     uploadedImg.style.transform = `scale(0.${value})`;
