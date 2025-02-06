@@ -1,8 +1,13 @@
 const ScaleConfig = {
-  MAX_SCALE: 100,
-  SCALE_STEP: 25,
-  BIGGER_BUTTON_LIMIT: 75,
-  SMALLER_BUTTON_LIMIT: 50,
+  maxScale: 100,
+  scaleStep: 25,
+  biggerButtonLimit: 75,
+  smallerButtonLimit: 50,
+};
+
+const ButtonAction = {
+  increase: 'incrase',
+  decrease: 'decrease',
 };
 
 const buttonBigger = document.querySelector('.scale__control--bigger');
@@ -13,14 +18,21 @@ const uploadedImg = document.querySelector('.img-upload__preview img');
 const changeScale = (action) => {
   let value = Number(scaleValueOutput.value.replace(/\D/g, ''));
 
-  if (action === 'increase' && value <= ScaleConfig.BIGGER_BUTTON_LIMIT) {
-    value += ScaleConfig.SCALE_STEP;
+  if (
+    action === ButtonAction.increase &&
+    value <= ScaleConfig.biggerButtonLimit
+  ) {
+    value += ScaleConfig.scaleStep;
   }
-  if (action === 'decrease' && value >= ScaleConfig.SMALLER_BUTTON_LIMIT) {
-    value -= ScaleConfig.SCALE_STEP;
+  if (
+    action === ButtonAction.decrease &&
+    value >= ScaleConfig.smallerButtonLimit
+  ) {
+    value -= ScaleConfig.scaleStep;
   }
 
-  if (value === ScaleConfig.MAX_SCALE) {
+  if (value === ScaleConfig.maxScale) {
+    //зачем что-то делать если мы достигли границы? (не знаю как изменить это)
     uploadedImg.style.transform = 'scale(1)';
   } else {
     uploadedImg.style.transform = `scale(0.${value})`;

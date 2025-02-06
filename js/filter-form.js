@@ -1,14 +1,14 @@
-const Filters = {
-  CHROME_FILTER: 'effect-chrome',
-  SEPIA_FILTER: 'effect-sepia',
-  MARVIN_FILTER: 'effect-marvin',
-  PHOBOS_FILTER: 'effect-phobos',
-  HEAT_FILTER: 'effect-heat',
-  ORIGINAL_FILTER: 'effect-none',
+const Filter = {
+  CHROME: 'effect-chrome',
+  SEPIA: 'effect-sepia',
+  MARVIN: 'effect-marvin',
+  PHOBOS: 'effect-phobos',
+  HEAT: 'effect-heat',
+  ORIGINAL: 'effect-none',
 };
 
 const filterConfigs = {
-  [Filters.CHROME_FILTER]: {
+  [Filter.CHROME]: {
     config: {
       range: {
         min: 0,
@@ -18,8 +18,9 @@ const filterConfigs = {
       step: 0.1,
     },
     cssRule: 'grayscale',
+    measure: '',
   },
-  [Filters.SEPIA_FILTER]: {
+  [Filter.SEPIA]: {
     config: {
       range: {
         min: 0,
@@ -29,8 +30,9 @@ const filterConfigs = {
       step: 0.1,
     },
     cssRule: 'sepia',
+    measure: '',
   },
-  [Filters.MARVIN_FILTER]: {
+  [Filter.MARVIN]: {
     config: {
       range: {
         min: 0,
@@ -40,8 +42,9 @@ const filterConfigs = {
       step: 1,
     },
     cssRule: 'invert',
+    measure: '%',
   },
-  [Filters.PHOBOS_FILTER]: {
+  [Filter.PHOBOS]: {
     config: {
       range: {
         min: 0,
@@ -51,8 +54,9 @@ const filterConfigs = {
       step: 0.1,
     },
     cssRule: 'blur',
+    measure: 'px',
   },
-  [Filters.HEAT_FILTER]: {
+  [Filter.HEAT]: {
     config: {
       range: {
         min: 1,
@@ -62,8 +66,9 @@ const filterConfigs = {
       step: 0.1,
     },
     cssRule: 'brightness',
+    measure: '',
   },
-  [Filters.ORIGINAL_FILTER]: {
+  [Filter.ORIGINAL]: {
     config: {
       range: {
         min: 0,
@@ -73,6 +78,7 @@ const filterConfigs = {
       step: 0.1,
     },
     cssRule: '',
+    measure: '',
   },
   default: {
     range: {
@@ -94,29 +100,25 @@ noUiSlider.create(slider, filterConfigs.default);
 
 sliderContainer.classList.add('hidden');
 
-const updateSlider = (filter) => {
+const updateSlider = (filter, filterMeasure) => {
   slider.noUiSlider.on('update', () => {
     effectValueOutput.value = slider.noUiSlider.get();
-    if (filter === 'blur') {
-      uploadedImg.style.filter = `${filter}(${slider.noUiSlider.get()}px)`;
-    }
-    if (filter === 'invert') {
-      uploadedImg.style.filter = `${filter}(${slider.noUiSlider.get()}%)`;
-    } else {
-      uploadedImg.style.filter = `${filter}(${slider.noUiSlider.get()})`;
-    }
+    uploadedImg.style.filter = `${filter}(${slider.noUiSlider.get()}${filterMeasure})`;
   });
 };
 
 const updateFilterSettings = (filtername) => {
-  if (filtername === Filters.ORIGINAL_FILTER) {
+  if (filtername === Filter.ORIGINAL) {
     slider.noUiSlider.updateOptions('effect-none');
     uploadedImg.style.filter = '';
 
     sliderContainer.classList.add('hidden');
   } else {
     slider.noUiSlider.updateOptions(filterConfigs[filtername].config);
-    updateSlider(filterConfigs[filtername].cssRule);
+    updateSlider(
+      filterConfigs[filtername].cssRule,
+      filterConfigs[filtername].measure
+    );
     sliderContainer.classList.remove('hidden');
   }
 };
