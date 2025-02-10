@@ -37,7 +37,9 @@ const getLengthValidationMessage = (hashtags) => {
   }
 };
 const getDuplicateValidationMessage = (hashtags) => {
-  if (!(hashtags.length === new Set(hashtags).size)) {
+  const loweredHashtags = hashtags.map((hashtag) => hashtag.toLowerCase());
+
+  if (!(loweredHashtags.length === new Set(loweredHashtags).size)) {
     return ValidationsErrorText.INVALID_DUPLICATED_HASHTAGS;
   }
 };

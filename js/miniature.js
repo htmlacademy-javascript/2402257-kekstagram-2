@@ -1,5 +1,4 @@
 import { initModal } from './modal.js';
-import { getUsersPhotoData } from './api.js';
 
 let currentData = '';
 
@@ -46,11 +45,14 @@ const onUserPhotoInterfaceClick = (evt) => {
 
 userPhotoInterface.addEventListener('click', onUserPhotoInterfaceClick);
 
-const generateUserInterface = () => {
-  getUsersPhotoData().then((photosData) => {
-    const createdPhotosElements = createMiniatures(photosData);
-    userPhotoInterface.append(createdPhotosElements);
-    currentData = photosData;
+const generateUserInterface = (data) => {
+  data().then((photosData) => {
+    if (!(photosData === undefined)) {
+      // сделал чтоб не вылетала ошибка, почему-то, если не приходят данные тут undefind
+      const createdPhotosElements = createMiniatures(photosData);
+      userPhotoInterface.append(createdPhotosElements);
+      currentData = photosData;
+    }
   });
 };
 

@@ -6,7 +6,7 @@ const ScaleConfig = {
 };
 
 const ButtonAction = {
-  increase: 'incrase',
+  increase: 'increase',
   decrease: 'decrease',
 };
 
@@ -16,7 +16,7 @@ const scaleValueOutput = document.querySelector('.scale__control--value');
 const uploadedImg = document.querySelector('.img-upload__preview img');
 
 const changeScale = (action) => {
-  let value = Number(scaleValueOutput.value.replace(/\D/g, ''));
+  let value = parseFloat(scaleValueOutput.value);
 
   if (
     action === ButtonAction.increase &&
@@ -37,7 +37,6 @@ const changeScale = (action) => {
   } else {
     uploadedImg.style.transform = `scale(0.${value})`;
   }
-
   const resultValue = `${value}%`;
   scaleValueOutput.value = resultValue;
 };

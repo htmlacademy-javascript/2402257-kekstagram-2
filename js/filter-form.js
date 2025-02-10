@@ -100,9 +100,18 @@ noUiSlider.create(slider, filterConfigs.default);
 
 sliderContainer.classList.add('hidden');
 
+const resetFilterValue = () => {
+  uploadedImg.style.filter = '';
+};
+
+const getSliderValue = () => {
+  const sliderValue = Number(slider.noUiSlider.get());
+  return sliderValue;
+};
+
 const updateSlider = (filter, filterMeasure) => {
   slider.noUiSlider.on('update', () => {
-    effectValueOutput.value = slider.noUiSlider.get();
+    effectValueOutput.value = getSliderValue();
     uploadedImg.style.filter = `${filter}(${slider.noUiSlider.get()}${filterMeasure})`;
   });
 };
@@ -110,7 +119,7 @@ const updateSlider = (filter, filterMeasure) => {
 const updateFilterSettings = (filtername) => {
   if (filtername === Filter.ORIGINAL) {
     slider.noUiSlider.updateOptions('effect-none');
-    uploadedImg.style.filter = '';
+    resetFilterValue();
 
     sliderContainer.classList.add('hidden');
   } else {
@@ -130,7 +139,7 @@ const onFilterContainerClick = (evt) => {
 };
 
 const resetFilter = () => {
-  uploadedImg.style.filter = '';
+  resetFilterValue();
   slider.noUiSlider.updateOptions(filterConfigs.default);
 };
 
@@ -140,7 +149,7 @@ const initFilter = () => {
 const destroyFilter = () => {
   filtersContainer.removeEventListener('click', onFilterContainerClick);
   sliderContainer.classList.add('hidden');
-  uploadedImg.style.filter = '';
+  resetFilterValue();
 };
 
 export { initFilter, destroyFilter, resetFilter };

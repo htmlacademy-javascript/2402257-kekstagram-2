@@ -10,19 +10,13 @@ import {
   resetValidators,
   setValidator,
 } from './validation-form.js';
-import { postUsersForm } from './api.js';
+import { sendData } from './api.js';
 
 const initializers = {
   escKey: 'esc-button',
   submitButton: 'submit-button',
   closeButton: 'close-button',
 };
-
-const succesMessageSample = document.querySelector('#success').content;
-const succesMessage = succesMessageSample.cloneNode(true);
-
-const errorMessageSample = document.querySelector('#error').content;
-const errorMessage = errorMessageSample.cloneNode(true);
 
 const imgInput = document.querySelector('.img-upload__input');
 const editFormOverlay = document.querySelector('.img-upload__overlay');
@@ -51,27 +45,29 @@ const onOutsideInterfaceClick = (evt) => {
 };
 
 const showErrorMessage = () => {
-  body.querySelector('.error').classList.remove('hidden');
+  addErrorMessageBlock();
   document.addEventListener('click', onOutsideInterfaceClick);
   document.addEventListener('keydown', onDocumentKeydownError);
   document.removeEventListener('keydown', onDocumentKeydown);
 };
 
 function hideErorrMessage() {
-  body.querySelector('.error').classList.add('hidden');
+  const errorMessageBlock = document.querySelector('.error');
+  body.removeChild(errorMessageBlock);
   document.removeEventListener('keydown', onDocumentKeydownError);
   document.addEventListener('keydown', onDocumentKeydown);
 }
 
 const showSuccesMessage = () => {
-  body.querySelector('.success').classList.remove('hidden');
+  addSuccessMessageBlock();
   document.addEventListener('click', onOutsideInterfaceClick);
   document.addEventListener('keydown', onDocumentKeydownSuccess);
   document.removeEventListener('keydown', onDocumentKeydown);
 };
 
 function hideSuccessMessage() {
-  body.querySelector('.success').classList.add('hidden');
+  const succesMessageBlock = document.querySelector('.success');
+  body.removeChild(succesMessageBlock);
   document.removeEventListener('keydown', onDocumentKeydownSuccess);
 }
 
@@ -136,19 +132,14 @@ function onEditFormSubmit(evt) {
 
   if (setValidator()) {
     blockSubmitButton();
-    postUsersForm(formData)
-      .then((response) => {
-        if (response.ok) {
-          closeEditForm();
-          showSuccesMessage();
-        } else {
-          throw new Error('Данные не отправлены!');
-        }
+    sendData(formData)
+      .then(() => {
+        closeEditForm();
+        showSuccesMessage();
+        editForm.reset();
       })
-      .catch((err) => {
-        if (err) {
-          showErrorMessage();
-        }
+      .catch(() => {
+        showErrorMessage();
       })
       .finally(unblockSubmitButton);
   }
@@ -173,8 +164,6 @@ function onDocumentKeydownSuccess(evt) {
 function onDocumentKeydown(evt) {
   if (isEscapeKey(evt)) {
     destroyEditForm(initializers.escKey);
-    hideSuccessMessage();
-    hideErorrMessage();
   }
   document.removeEventListener('keydown', onDocumentKeydown);
 }
@@ -196,17 +185,19 @@ const showEditForm = () => {
   body.classList.add('modal-open');
 };
 
-const addSuccessMessageBlock = () => {
+function addSuccessMessageBlock() {
+  const succesMessageSample = document.querySelector('#success').content;
+  const succesMessage = succesMessageSample.cloneNode(true);
   body.appendChild(succesMessage);
-};
+}
 
-const addErrorMessageBlock = () => {
+function addErrorMessageBlock() {
+  const errorMessageSample = document.querySelector('#error').content; // Находим шаблон каждый раз
+  const errorMessage = errorMessageSample.cloneNode(true); // Клонируем свежий узел
   body.appendChild(errorMessage);
-};
+}
 
 const onImgInputChange = () => {
-  addErrorMessageBlock();
-  addSuccessMessageBlock();
   addValidators();
   initFilter();
   initScaleButtons();

@@ -1,25 +1,39 @@
-const showErrorMessage = () => {
-  const errorBlock = document.querySelector('#data-error').content;
-  const errorElement = errorBlock.cloneNode(true);
-  const body = document.body;
-  const errorNode = errorElement.querySelector('.data-error');
-  body.appendChild(errorElement);
+import { showErrorMessage } from './util.js';
 
-  setTimeout(() => {
-    errorNode.remove();
-  }, 5000);
+const BASE_URL = 'https://32.javascript.htmlacademy.pro/kekstagram';
+
+const Route = {
+  GET_DATA: '/data',
+  SEND_DATA: '/',
+};
+const Method = {
+  GET: 'GET',
+  POST: 'POST',
+};
+const ErrorText = {
+  GET_DATA: 'Не удалось загрузить данные. Попробуйте обновить страницу',
+  SEND_DATA: 'Не удалось отправить форму. Попробуйте ещё раз',
 };
 
-const getUsersPhotoData = () =>
-  fetch('https://31.javascript.htmlacademy.pro/kekstagram/data')
-    .then((response) => response.json())
+const load = (route, errorText, method = Method.GET, body = null) =>
+  fetch(`${BASE_URL}${route}`, { method, body })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error();
+      }
+      return response.json();
+    })
     .catch(() => {
-      showErrorMessage();
+      if (method === Method.GET) {
+        showErrorMessage();
+      } else {
+        throw new Error();
+      }
     });
 
-const postUsersForm = (userData) =>
-  fetch('https://31.javascript.htmlacademy.pro/kekstagram', {
-    method: 'POST',
-    body: userData,
-  });
-export { getUsersPhotoData, postUsersForm };
+const getData = () => load(Route.GET_DATA, ErrorText.GET_DATA);
+
+const sendData = (body) =>
+  load(Route.SEND_DATA, ErrorText.SEND_DATA, Method.POST, body);
+
+export { getData, sendData };
