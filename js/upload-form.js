@@ -26,46 +26,46 @@ const hashtagInput = editForm.querySelector('.text__hashtags');
 const commentInput = editForm.querySelector('.text__description');
 const body = document.body;
 
-const onOutsideInterfaceClick = (evt) => {
+const onDocumentClick = (evt) => {
   if (
     evt.target.classList.contains('error') ||
     evt.target.classList.contains('error__button')
   ) {
     hideErorrMessage();
-    document.removeEventListener('click', onOutsideInterfaceClick);
+    document.removeEventListener('click', onDocumentClick);
   }
   if (
     evt.target.classList.contains('success') ||
     evt.target.classList.contains('success__button')
   ) {
     hideSuccessMessage();
-    document.removeEventListener('click', onOutsideInterfaceClick);
+    document.removeEventListener('click', onDocumentClick);
   }
 };
 
 const showErrorMessage = () => {
   addErrorMessageBlock();
-  document.addEventListener('click', onOutsideInterfaceClick);
-  body.addEventListener('keydown', onDocumentKeydownError);
+  document.addEventListener('click', onDocumentClick);
+  body.addEventListener('keydown', onBodyKeydownError);
 };
 
 function hideErorrMessage() {
   const errorMessageBlock = document.querySelector('.error');
   body.removeChild(errorMessageBlock);
-  body.removeEventListener('keydown', onDocumentKeydownError);
+  body.removeEventListener('keydown', onBodyKeydownError);
   document.addEventListener('keydown', onDocumentKeydown);
 }
 
 const showSuccesMessage = () => {
   addSuccessMessageBlock();
-  document.addEventListener('click', onOutsideInterfaceClick);
-  body.addEventListener('keydown', onDocumentKeydownSuccess);
+  document.addEventListener('click', onDocumentClick);
+  body.addEventListener('keydown', onBodyKeydownSuccess);
 };
 
 function hideSuccessMessage() {
   const succesMessageBlock = document.querySelector('.success');
   body.removeChild(succesMessageBlock);
-  body.removeEventListener('keydown', onDocumentKeydownSuccess);
+  body.removeEventListener('keydown', onBodyKeydownSuccess);
 }
 
 const onCommentInputKeyDown = (evt) => {
@@ -139,22 +139,22 @@ function onEditFormSubmit(evt) {
   }
 }
 
-function onDocumentKeydownError(evt) {
+function onBodyKeydownError(evt) {
   evt.stopPropagation();
   if (isEscapeKey(evt)) {
     hideErorrMessage();
-    document.removeEventListener('click', onOutsideInterfaceClick);
+    document.removeEventListener('click', onDocumentClick);
   }
-  body.removeEventListener('keydown', onDocumentKeydownError);
+  body.removeEventListener('keydown', onBodyKeydownError);
 }
 
-function onDocumentKeydownSuccess(evt) {
+function onBodyKeydownSuccess(evt) {
   evt.stopPropagation();
   if (isEscapeKey(evt)) {
     hideSuccessMessage();
-    document.removeEventListener('click', onOutsideInterfaceClick);
+    document.removeEventListener('click', onDocumentClick);
   }
-  body.removeEventListener('keydown', onDocumentKeydownSuccess);
+  body.removeEventListener('keydown', onBodyKeydownSuccess);
 }
 
 function onDocumentKeydown(evt) {

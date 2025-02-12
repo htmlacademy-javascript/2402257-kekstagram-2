@@ -1,15 +1,3 @@
-import { showErrorMessage } from './error-message.js';
-
-const SHOW_ERROR_TIME = 5000;
-
-const ErrorTemplateId = {
-  DATA: 'data-error',
-};
-
-const ErrorClass = {
-  DATA: '.data-error',
-};
-
 const BASE_URL = 'https://32.javascript.htmlacademy.pro/kekstagram';
 
 const Route = {
@@ -36,15 +24,7 @@ const load = (route, errorText, method = Method.GET, body = null) =>
       return response.json();
     })
     .catch(() => {
-      if (method === Method.GET) {
-        showErrorMessage(
-          ErrorTemplateId.DATA,
-          ErrorClass.DATA,
-          SHOW_ERROR_TIME
-        );
-      } else {
-        throw new Error(errorText);
-      }
+      throw new Error(errorText);
     });
 
 const getData = () => load(Route.GET_DATA, ErrorText.GET_DATA);

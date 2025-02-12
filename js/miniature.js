@@ -45,16 +45,9 @@ const onUserPhotoInterfaceClick = (evt) => {
 
 userPhotoInterface.addEventListener('click', onUserPhotoInterfaceClick);
 
-const generateUserInterface = (data) => {
-  data().then((photosData) => {
-    if (!(photosData === undefined)) {
-      // сделал чтоб не вылетала ошибка, почему-то, если не приходят данные тут undefind
-      // вот тут не понял что надо сделать в итоге, как избежать этой проверки?
-      const createdPhotosElements = createMiniatures(photosData);
-      userPhotoInterface.append(createdPhotosElements);
-      currentData = photosData;
-    }
-  });
+const generateUserInterface = (photosData) => {
+  userPhotoInterface.append(createMiniatures(photosData));
+  currentData = photosData;
 };
 
 export { generateUserInterface };

@@ -1,5 +1,12 @@
 import { generateUserInterface } from './miniature.js';
-import {} from './upload-form.js';
+import { showErrorMessage } from './error-message.js';
+import './upload-form.js';
 import { getData } from './api.js';
 
-generateUserInterface(getData);
+getData()
+  .then((data) => generateUserInterface(data))
+  .catch((err) => {
+    // eslint-disable-next-line no-console
+    console.error(err);
+    showErrorMessage();
+  });
