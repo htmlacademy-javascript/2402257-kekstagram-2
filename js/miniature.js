@@ -1,8 +1,9 @@
-import { createPhotoPost } from './photopost.js';
 import { initModal } from './modal.js';
+
+let currentData = '';
+
 const userPhotoInterface = document.querySelector('.pictures');
 const sample = document.querySelector('#picture').content;
-const photosData = createPhotoPost();
 const generatedPictures = document.createDocumentFragment();
 
 const createMiniature = ({ comments, likes, url, description, id }) => {
@@ -35,7 +36,7 @@ const onUserPhotoInterfaceClick = (evt) => {
   ) {
     evt.preventDefault();
 
-    const miniatureData = photosData.find(
+    const miniatureData = currentData.find(
       (photoData) => photoData.id === +evt.target.closest('.picture').dataset.id
     );
     initModal(miniatureData);
@@ -44,8 +45,9 @@ const onUserPhotoInterfaceClick = (evt) => {
 
 userPhotoInterface.addEventListener('click', onUserPhotoInterfaceClick);
 
-const generateUserInterface = () => {
-  const createdPhotosElements = createMiniatures(photosData);
-  userPhotoInterface.append(createdPhotosElements);
+const generateUserInterface = (photosData) => {
+  userPhotoInterface.append(createMiniatures(photosData));
+  currentData = photosData;
 };
+
 export { generateUserInterface };

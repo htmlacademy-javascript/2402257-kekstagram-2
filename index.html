@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="vendor/nouislider/nouislider.css" />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
     <title>Кекстаграм</title>
@@ -420,7 +421,7 @@
 
     <!-- Сообщение с ошибкой загрузки изображения -->
     <template id="error">
-      <section class="error">
+      <section class="error hidden">
         <div class="error__inner">
           <h2 class="error__title">Ошибка загрузки файла</h2>
           <button type="button" class="error__button">
@@ -432,7 +433,7 @@
 
     <!-- Сообщение об успешной загрузке изображения -->
     <template id="success">
-      <section class="success">
+      <section class="success hidden">
         <div class="success__inner">
           <h2 class="success__title">Изображение успешно загружено</h2>
           <button type="button" class="success__button">Круто!</button>
@@ -447,6 +448,7 @@
       </section>
     </template>
     <script src="/vendor/pristine/pristine.min.js"></script>
+    <script src="/vendor/nouislider/nouislider.js"></script>
     <script src="js/main.js" type="module"></script>
   </body>
 </html>
