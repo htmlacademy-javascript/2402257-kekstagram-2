@@ -12,10 +12,9 @@ import {
 } from './validation-form.js';
 import { sendData } from './api.js';
 
-const initializers = {
-  escKey: 'esc-button',
-  submitButton: 'submit-button',
-  closeButton: 'close-button',
+const SubmitButtonText = {
+  IDLE: 'ПУБЛИКУЮ...',
+  SENDING: 'ОПУБЛИКОВАТЬ',
 };
 
 const imgInput = document.querySelector('.img-upload__input');
@@ -47,28 +46,26 @@ const onOutsideInterfaceClick = (evt) => {
 const showErrorMessage = () => {
   addErrorMessageBlock();
   document.addEventListener('click', onOutsideInterfaceClick);
-  document.addEventListener('keydown', onDocumentKeydownError);
-  document.removeEventListener('keydown', onDocumentKeydown);
+  body.addEventListener('keydown', onDocumentKeydownError);
 };
 
 function hideErorrMessage() {
   const errorMessageBlock = document.querySelector('.error');
   body.removeChild(errorMessageBlock);
-  document.removeEventListener('keydown', onDocumentKeydownError);
+  body.removeEventListener('keydown', onDocumentKeydownError);
   document.addEventListener('keydown', onDocumentKeydown);
 }
 
 const showSuccesMessage = () => {
   addSuccessMessageBlock();
   document.addEventListener('click', onOutsideInterfaceClick);
-  document.addEventListener('keydown', onDocumentKeydownSuccess);
-  document.removeEventListener('keydown', onDocumentKeydown);
+  body.addEventListener('keydown', onDocumentKeydownSuccess);
 };
 
 function hideSuccessMessage() {
   const succesMessageBlock = document.querySelector('.success');
   body.removeChild(succesMessageBlock);
-  document.removeEventListener('keydown', onDocumentKeydownSuccess);
+  body.removeEventListener('keydown', onDocumentKeydownSuccess);
 }
 
 const onCommentInputKeyDown = (evt) => {
@@ -79,16 +76,12 @@ const onHashtagInputKeyDown = (evt) => {
   evt.stopPropagation();
 };
 
-const removeEditFormListeners = (initializer) => {
-  if (
-    initializer === initializer.escKey &&
-    initializer === initializer.closeButton
-  ) {
-    document.removeEventListener('keydown', onDocumentKeydown);
-  }
+const removeEditFormListeners = () => {
   commentInput.removeEventListener('keydown', onCommentInputKeyDown);
   hashtagInput.removeEventListener('keydown', onHashtagInputKeyDown);
   editForm.removeEventListener('submit', onEditFormSubmit);
+  document.removeEventListener('keydown', onDocumentKeydown);
+  closeButton.removeEventListener('click', onCloseButtonClick);
 };
 
 const hideEditForm = () => {
@@ -100,29 +93,30 @@ const clearEditFormInputs = () => {
   editForm.reset();
 };
 
-const destroyEditForm = (initializer) => {
+const destroyEditForm = () => {
   resetFilter();
   destroyFilter();
   hideEditForm();
-  removeEditFormListeners(initializer);
+  removeEditFormListeners();
   destroyScaleButtons();
   clearEditFormInputs();
   resetUploadedImgScale();
   resetValidators();
-  closeButton.removeEventListener('click', onCloseButtonClick);
 };
 
 const blockSubmitButton = () => {
   submitButton.disabled = true;
+  submitButton.textContent = SubmitButtonText.IDLE;
 };
 
 const unblockSubmitButton = () => {
   submitButton.disabled = false;
+  submitButton.textContent = SubmitButtonText.SENDING;
 };
 
 const closeEditForm = () => {
   editForm.removeEventListener('submit', onEditFormSubmit);
-  destroyEditForm(initializers.submitButton);
+  destroyEditForm();
 };
 
 function onEditFormSubmit(evt) {
@@ -146,30 +140,32 @@ function onEditFormSubmit(evt) {
 }
 
 function onDocumentKeydownError(evt) {
+  evt.stopPropagation();
   if (isEscapeKey(evt)) {
     hideErorrMessage();
     document.removeEventListener('click', onOutsideInterfaceClick);
   }
-  document.removeEventListener('keydown', onDocumentKeydownError);
+  body.removeEventListener('keydown', onDocumentKeydownError);
 }
 
 function onDocumentKeydownSuccess(evt) {
+  evt.stopPropagation();
   if (isEscapeKey(evt)) {
     hideSuccessMessage();
     document.removeEventListener('click', onOutsideInterfaceClick);
   }
-  document.removeEventListener('keydown', onDocumentKeydownSuccess);
+  body.removeEventListener('keydown', onDocumentKeydownSuccess);
 }
 
 function onDocumentKeydown(evt) {
   if (isEscapeKey(evt)) {
-    destroyEditForm(initializers.escKey);
+    destroyEditForm();
   }
   document.removeEventListener('keydown', onDocumentKeydown);
 }
 
 function onCloseButtonClick() {
-  destroyEditForm(initializers.closeButton);
+  destroyEditForm();
 }
 
 const addEditFormListeners = () => {
@@ -192,8 +188,8 @@ function addSuccessMessageBlock() {
 }
 
 function addErrorMessageBlock() {
-  const errorMessageSample = document.querySelector('#error').content; // Находим шаблон каждый раз
-  const errorMessage = errorMessageSample.cloneNode(true); // Клонируем свежий узел
+  const errorMessageSample = document.querySelector('#error').content;
+  const errorMessage = errorMessageSample.cloneNode(true);
   body.appendChild(errorMessage);
 }
 
