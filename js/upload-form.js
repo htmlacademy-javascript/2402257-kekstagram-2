@@ -46,26 +46,24 @@ const onDocumentClick = (evt) => {
 const showErrorMessage = () => {
   addErrorMessageBlock();
   document.addEventListener('click', onDocumentClick);
-  body.addEventListener('keydown', onBodyKeydownError);
 };
 
 function hideErorrMessage() {
   const errorMessageBlock = document.querySelector('.error');
   body.removeChild(errorMessageBlock);
-  body.removeEventListener('keydown', onBodyKeydownError);
   document.addEventListener('keydown', onDocumentKeydown);
 }
 
 const showSuccesMessage = () => {
   addSuccessMessageBlock();
+  document.addEventListener('keydown', onDocumentKeydown);
   document.addEventListener('click', onDocumentClick);
-  body.addEventListener('keydown', onBodyKeydownSuccess);
 };
 
 function hideSuccessMessage() {
   const succesMessageBlock = document.querySelector('.success');
   body.removeChild(succesMessageBlock);
-  body.removeEventListener('keydown', onBodyKeydownSuccess);
+  document.removeEventListener('keydown', onDocumentKeydown);
 }
 
 const onCommentInputKeyDown = (evt) => {
@@ -80,8 +78,8 @@ const removeEditFormListeners = () => {
   commentInput.removeEventListener('keydown', onCommentInputKeyDown);
   hashtagInput.removeEventListener('keydown', onHashtagInputKeyDown);
   editForm.removeEventListener('submit', onEditFormSubmit);
-  document.removeEventListener('keydown', onDocumentKeydown);
   closeButton.removeEventListener('click', onCloseButtonClick);
+  document.removeEventListener('keydown', onDocumentKeydown);
 };
 
 const hideEditForm = () => {
@@ -139,29 +137,22 @@ function onEditFormSubmit(evt) {
   }
 }
 
-function onBodyKeydownError(evt) {
-  evt.stopPropagation();
-  if (isEscapeKey(evt)) {
-    hideErorrMessage();
-    document.removeEventListener('click', onDocumentClick);
-  }
-  body.removeEventListener('keydown', onBodyKeydownError);
-}
-
-function onBodyKeydownSuccess(evt) {
-  evt.stopPropagation();
-  if (isEscapeKey(evt)) {
-    hideSuccessMessage();
-    document.removeEventListener('click', onDocumentClick);
-  }
-  body.removeEventListener('keydown', onBodyKeydownSuccess);
-}
-
-function onDocumentKeydown(evt) {
-  if (isEscapeKey(evt)) {
+const destroyModalMessage = () => {
+  if (!document.contains(body.querySelector('.error'))) {
     destroyEditForm();
   }
-  document.removeEventListener('keydown', onDocumentKeydown);
+  if (document.contains(body.querySelector('.error'))) {
+    hideErorrMessage();
+  }
+  if (document.contains(body.querySelector('.success'))) {
+    hideSuccessMessage();
+    destroyEditForm();
+  }
+};
+function onDocumentKeydown(evt) {
+  if (isEscapeKey(evt)) {
+    destroyModalMessage();
+  }
 }
 
 function onCloseButtonClick() {
