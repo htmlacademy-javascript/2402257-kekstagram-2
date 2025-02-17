@@ -26,19 +26,43 @@ const hashtagInput = editForm.querySelector('.text__hashtags');
 const commentInput = editForm.querySelector('.text__description');
 const body = document.body;
 
+const addSuccessMessageBlock = () => {
+  const succesMessageSample = document.querySelector('#success').content;
+  const succesMessage = succesMessageSample.cloneNode(true);
+  body.appendChild(succesMessage);
+};
+
+const addErrorMessageBlock = () => {
+  const errorMessageSample = document.querySelector('#error').content;
+  const errorMessage = errorMessageSample.cloneNode(true);
+  body.appendChild(errorMessage);
+};
+
+const hideErorrMessageBlock = () => {
+  const errorMessageBlock = document.querySelector('.error');
+  body.removeChild(errorMessageBlock);
+  document.addEventListener('keydown', onDocumentKeydown);
+};
+
+const hideSuccessMessageBlock = () => {
+  const succesMessageBlock = document.querySelector('.success');
+  body.removeChild(succesMessageBlock);
+  document.removeEventListener('keydown', onDocumentKeydown);
+};
+
 const onDocumentClick = (evt) => {
   if (
     evt.target.classList.contains('error') ||
     evt.target.classList.contains('error__button')
   ) {
-    hideErorrMessage();
+    hideErorrMessageBlock();
     document.removeEventListener('click', onDocumentClick);
   }
   if (
     evt.target.classList.contains('success') ||
     evt.target.classList.contains('success__button')
   ) {
-    hideSuccessMessage();
+    hideSuccessMessageBlock();
     document.removeEventListener('click', onDocumentClick);
   }
 };
@@ -48,23 +72,11 @@ const showErrorMessage = () => {
   document.addEventListener('click', onDocumentClick);
 };
 
-function hideErorrMessage() {
-  const errorMessageBlock = document.querySelector('.error');
-  body.removeChild(errorMessageBlock);
-  document.addEventListener('keydown', onDocumentKeydown);
-}
-
 const showSuccesMessage = () => {
   addSuccessMessageBlock();
   document.addEventListener('keydown', onDocumentKeydown);
   document.addEventListener('click', onDocumentClick);
 };
-
-function hideSuccessMessage() {
-  const succesMessageBlock = document.querySelector('.success');
-  body.removeChild(succesMessageBlock);
-  document.removeEventListener('keydown', onDocumentKeydown);
-}
 
 const onCommentInputKeyDown = (evt) => {
   evt.stopPropagation();
@@ -128,7 +140,6 @@ function onEditFormSubmit(evt) {
       .then(() => {
         closeEditForm();
         showSuccesMessage();
-        editForm.reset();
       })
       .catch(() => {
         showErrorMessage();
@@ -142,13 +153,14 @@ const destroyModalMessage = () => {
     destroyEditForm();
   }
   if (document.contains(body.querySelector('.error'))) {
-    hideErorrMessage();
+    hideErorrMessageBlock();
   }
   if (document.contains(body.querySelector('.success'))) {
-    hideSuccessMessage();
+    hideSuccessMessageBlock();
     destroyEditForm();
   }
 };
+
 function onDocumentKeydown(evt) {
   if (isEscapeKey(evt)) {
     destroyModalMessage();
@@ -171,18 +183,6 @@ const showEditForm = () => {
   editFormOverlay.classList.remove('hidden');
   body.classList.add('modal-open');
 };
-
-function addSuccessMessageBlock() {
-  const succesMessageSample = document.querySelector('#success').content;
-  const succesMessage = succesMessageSample.cloneNode(true);
-  body.appendChild(succesMessage);
-}
-
-function addErrorMessageBlock() {
-  const errorMessageSample = document.querySelector('#error').content;
-  const errorMessage = errorMessageSample.cloneNode(true);
-  body.appendChild(errorMessage);
-}
 
 const onImgInputChange = () => {
   addValidators();
