@@ -10,7 +10,7 @@ import { getData } from './api.js';
 import './user-photo-upload.js';
 
 const RERENDER_DELAY = 500;
-//привет
+
 getData()
   .then((data) => {
     generateUserInterface(data);
