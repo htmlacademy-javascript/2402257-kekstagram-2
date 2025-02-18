@@ -9,10 +9,8 @@ const ValidationsErrorText = {
 };
 let pristine = '';
 const editForm = document.querySelector('.img-upload__form');
-
 const hashtagInput = editForm.querySelector('.text__hashtags');
 const commentInput = editForm.querySelector('.text__description');
-
 const regular = /^#[a-zа-яё0-9]{1,19}$/i;
 
 const getHashtags = (input) =>
@@ -57,6 +55,7 @@ const getErrorMessage = () => {
     return message ? [...acc, message].join('') : acc;
   }, []);
 };
+
 const validateHashtags = () => {
   const errorMessage = getErrorMessage();
   return errorMessage.length === 0;

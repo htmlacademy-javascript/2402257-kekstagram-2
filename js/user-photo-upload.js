@@ -1,11 +1,11 @@
 const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 
-const fileChooser = document.querySelector('#upload-file');
+const fileLoader = document.querySelector('#upload-file');
 const previewPicture = document.querySelector('.img-upload__preview img');
 const previewFilters = document.querySelectorAll('.effects__preview');
 
-fileChooser.addEventListener('change', () => {
-  const file = fileChooser.files[0];
+fileLoader.addEventListener('change', () => {
+  const file = fileLoader.files[0];
   const fileName = file.name.toLowerCase();
 
   const matches = FILE_TYPES.some((fileType) => fileName.endsWith(fileType));
