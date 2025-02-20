@@ -1,5 +1,6 @@
 const COMMENT_LENGTH_LIMIT = 140;
 const MAX_QUANTITY_OF_HASHTAGS = 5;
+const REGULAR = /^#[a-zа-яё0-9]{1,19}$/i;
 
 const ValidationsErrorText = {
   INVALID_QUANTITY_OF_HASHTAGS: 'Неверное кол-во Хэштегов! ',
@@ -11,7 +12,6 @@ let pristine = '';
 const editForm = document.querySelector('.img-upload__form');
 const hashtagInput = editForm.querySelector('.text__hashtags');
 const commentInput = editForm.querySelector('.text__description');
-const regular = /^#[a-zа-яё0-9]{1,19}$/i;
 
 const getHashtags = (input) =>
   input.value.split(' ').filter((hash) => Boolean(hash));
@@ -19,7 +19,7 @@ const getHashtags = (input) =>
 const checkCommentLimit = () =>
   !(commentInput.value.length > COMMENT_LENGTH_LIMIT);
 
-const checkHashtagRegular = (hashtag) => regular.test(hashtag);
+const checkHashtagRegular = (hashtag) => REGULAR.test(hashtag);
 
 const getRegularValidationMessage = (hashtags) => {
   for (let i = 0; i < hashtags.length; i++) {

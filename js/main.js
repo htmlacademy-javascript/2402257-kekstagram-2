@@ -10,7 +10,7 @@ import { getData } from './api.js';
 import './user-photo-upload.js';
 
 const RERENDER_DELAY = 500;
-//привет
+
 getData()
   .then((data) => {
     generateUserInterface(data);
@@ -20,8 +20,6 @@ getData()
       }, RERENDER_DELAY)
     );
   })
-  .catch((err) => {
-    // eslint-disable-next-line no-console
-    console.error(err);
+  .catch(() => {
     showErrorMessage();
   });
